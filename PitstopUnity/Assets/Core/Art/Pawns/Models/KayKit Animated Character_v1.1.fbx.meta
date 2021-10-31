@@ -1,0 +1,202 @@
+fileFormatVersion: 2
+guid: 2e219a2fa27342344b2228b27b1e8005
+ModelImporter:
+  serializedVersion: 20200
+  internalIDToNameTable:
+  - first:
+      74: 9019994078358539022
+    second: KayKit Animated Character|Attack(1h)
+  - first:
+      74: -1198715839237812607
+    second: KayKit Animated Character|BasePose
+  - first:
+      74: -7335272188109255790
+    second: KayKit Animated Character|Block
+  - first:
+      74: 5593349898487233307
+    second: KayKit Animated Character|Cheer
+  - first:
+      74: 1678070290478169378
+    second: KayKit Animated Character|Climbing
+  - first:
+      74: 5300060005361769363
+    second: KayKit Animated Character|Defeat
+  - first:
+      74: -6991075544170381116
+    second: KayKit Animated Character|HeavyAttack
+  - first:
+      74: 560194234720034106
+    second: KayKit Animated Character|Hop
+  - first:
+      74: -3132563606269690235
+    second: KayKit Animated Character|Idle
+  - first:
+      74: 1728088361261182183
+    second: KayKit Animated Character|Jump
+  - first:
+      74: -2399789667805123660
+    second: KayKit Animated Character|LayingDownIdle
+  - first:
+      74: 8886567251451666223
+    second: KayKit Animated Character|Run
+  - first:
+      74: -1465499701635773613
+    second: KayKit Animated Character|Shoot(1h)
+  - first:
+      74: 8888589377697818043
+    second: KayKit Animated Character|Shoot(2h)
+  - first:
+      74: -56628868583331882
+    second: KayKit Animated Character|Shooting(1h)
+  - first:
+      74: -835893644005555353
+    second: KayKit Animated Character|Shooting(2h)
+  - first:
+      74: 7807934186493442652
+    second: KayKit Animated Character|Walk
+  - first:
+      74: 5358457859207210129
+    second: KayKit Animated Character|Wave
+  externalObjects: {}
+  materials:
+    materialImportMode: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
+      human bone 'LeftFoot' not found\n"
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 3
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: KayKit Animated Character_v1.1(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: KayKit Animated Character
+      parentName: KayKit Animated Character_v1.1(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.0000002761675, y: 0.00000029802334, z: 0.00000006717954, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Body
+      parentName: KayKit Animated Character
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.00000008146034, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Head
+      parentName: Body
+      position: {x: -0, y: 0.7115979, z: 0}
+      rotation: {x: 7.1054274e-15, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: armLeft
+      parentName: Body
+      position: {x: -0.14, y: 0.69159794, z: 0}
+      rotation: {x: 0.69969887, y: -0.10208714, z: 0.69969845, w: 0.102086976}
+      scale: {x: 1.000001, y: 1.0000001, z: 1}
+    - name: handSlotLeft
+      parentName: armLeft
+      position: {x: 1.2434498e-14, y: 0.5509223, z: -0.000000007450586}
+      rotation: {x: 0.6066169, y: 0.60661674, z: -0.36334014, w: 0.36334005}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: armRight
+      parentName: Body
+      position: {x: 0.14, y: 0.69159794, z: 0}
+      rotation: {x: 0.69969916, y: 0.10208682, z: 0.69969827, w: -0.10208712}
+      scale: {x: 1.000001, y: 1.0000001, z: 1}
+    - name: handSlotRight
+      parentName: armRight
+      position: {x: 3.5527137e-15, y: 0.5509222, z: 0.000000014901172}
+      rotation: {x: 0.36333993, y: 0.3633402, z: -0.60661685, w: 0.6066169}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: PrototypePete
+      parentName: KayKit Animated Character_v1.1(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.000000037748947, y: 5.4307467e-14, z: 2.1908189e-14, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

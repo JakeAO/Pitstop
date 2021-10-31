@@ -40,7 +40,7 @@ PlayerSettings:
     width: 1
     height: 1
   m_SplashScreenLogos:
-  - logo: {fileID: 21300000, guid: 15f6245f4a2173c459ac6810605167bb, type: 3}
+  - logo: {fileID: 21300000, guid: 176aee21e4764c9488d9163634f02652, type: 3}
     duration: 2
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
@@ -601,8 +601,8 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    1: DREAMTECK_SPLINES;POSEIDON;POSEIDON_URP;JUPITER;GRIFFIN;TEXTURE_GRAPH;TG_SEARCHER;ODIN_INSPECTOR;ODIN_INSPECTOR_3;GRIFFIN_BURST;GRIFFIN_2021
-    13: DREAMTECK_SPLINES;ODIN_INSPECTOR;ODIN_INSPECTOR_3;POSEIDON;JUPITER;TEXTURE_GRAPH
+    1: DREAMTECK_SPLINES;POSEIDON;POSEIDON_URP;JUPITER;GRIFFIN;TEXTURE_GRAPH;ODIN_INSPECTOR;ODIN_INSPECTOR_3;GRIFFIN_BURST;GRIFFIN_2021;TG_SEARCHER
+    13: DREAMTECK_SPLINES;ODIN_INSPECTOR;ODIN_INSPECTOR_3;POSEIDON;TEXTURE_GRAPH;POSEIDON_URP;TG_SEARCHER
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
