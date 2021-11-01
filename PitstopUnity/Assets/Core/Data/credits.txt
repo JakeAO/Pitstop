@@ -1,0 +1,26 @@
+A Sad Pumpkin Game
+
+Designed and Developed by
+	Jake O'Connor
+
+Assets Courtesy Of
+
+	Indie_G
+		Low Poly Props Pack
+			www.behance.net/indieG
+	Kay Lousberg
+		KayKit - Character Animations
+			kaylousberg.itch.io
+	Kenney
+		Racing Kit
+			www.kenney.nl
+	Layer Lab
+	    GUI PRO Kit - Fantasy RPG
+	        www.layerlabgames.com
+	Quaternius
+		LowPoly Cars
+			quaternius.itch.io
+	Vertex Field
+		4 Industrial Barrels
+		Logpile
+			vertexfield.wixsite.com
