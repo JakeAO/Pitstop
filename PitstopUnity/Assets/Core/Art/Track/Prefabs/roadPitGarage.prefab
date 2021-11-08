@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 6022317222017906062}
   - component: {fileID: 7222729327745907243}
   - component: {fileID: 4888865511288852193}
-  m_Layer: 0
+  - component: {fileID: 4991922851785064324}
+  m_Layer: 7
   m_Name: roadPitGarage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4991922851785064324
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6401938577162792756}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.01, y: 0.2, z: 10}
+  m_Center: {x: 4.09, y: 0.1, z: 5}

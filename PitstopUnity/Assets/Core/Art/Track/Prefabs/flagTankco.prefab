@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5954566832478409544}
   - component: {fileID: 7281482121313377517}
   - component: {fileID: 4821651099174643751}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: flagTankco
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 5482785827754284920}
   - component: {fileID: 6126733251561330345}
   - component: {fileID: 5182318426932156705}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}

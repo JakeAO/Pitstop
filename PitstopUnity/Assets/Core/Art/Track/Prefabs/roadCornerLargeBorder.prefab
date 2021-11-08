@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1364959437911746559}
   - component: {fileID: 2692753408200599642}
   - component: {fileID: 196579196365184144}
-  m_Layer: 0
+  - component: {fileID: -1056639755153325831}
+  m_Layer: 10
   m_Name: roadCornerLargeBorder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,3 +83,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &-1056639755153325831
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853969899017977157}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6881218908826379421, guid: 1be6ba80f495f7b4baac5d7fada1730f, type: 3}

@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3699561578873470322}
   - component: {fileID: 358212310799528663}
   - component: {fileID: 2529993276626322973}
-  m_Layer: 0
+  - component: {fileID: 33319856045971942}
+  m_Layer: 7
   m_Name: roadBump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &33319856045971942
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4043294630276491208}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6824312419534961008, guid: 961b31241a0e2f641b2d3e63cf9f9362, type: 3}

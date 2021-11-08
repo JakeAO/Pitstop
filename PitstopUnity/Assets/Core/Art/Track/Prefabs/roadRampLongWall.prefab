@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1363825128318046497}
   - component: {fileID: 2684880054401965700}
   - component: {fileID: 190958123685112398}
-  m_Layer: 0
+  - component: {fileID: 8273241402208401486}
+  m_Layer: 7
   m_Name: roadRampLongWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &8273241402208401486
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848330821846846363}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3103898394281871743, guid: 90f8fffae42f80b4f9906abb7daf070b, type: 3}

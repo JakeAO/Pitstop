@@ -65,7 +65,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5570984010353470993, guid: 9506cf670e8269d4ea111857a6928b48, type: 3}
       propertyPath: m_Name
-      value: barrier_Wall
+      value: column
       objectReference: {fileID: 0}
     - target: {fileID: 6219717379707916228, guid: 9506cf670e8269d4ea111857a6928b48, type: 3}
       propertyPath: m_Materials.Array.data[0]

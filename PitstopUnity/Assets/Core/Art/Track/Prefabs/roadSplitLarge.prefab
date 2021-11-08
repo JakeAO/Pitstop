@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 6272070580084044118}
   - component: {fileID: 6963978323472514803}
   - component: {fileID: 5134651314932386361}
-  m_Layer: 0
+  - component: {fileID: 7607700240069759914}
+  m_Layer: 7
   m_Name: roadSplitLarge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7607700240069759914
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6647610307615534060}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1444873317315069453, guid: accc4823ac531cf4b8d4ae20eaae31f5, type: 3}

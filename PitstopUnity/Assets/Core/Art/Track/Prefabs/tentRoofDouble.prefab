@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8448144597003159663}
   - component: {fileID: 4796911213798574026}
   - component: {fileID: 7311306045926519552}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: tentRoofDouble
   m_TagString: Untagged
   m_Icon: {fileID: 0}

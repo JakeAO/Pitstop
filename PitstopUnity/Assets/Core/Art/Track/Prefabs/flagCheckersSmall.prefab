@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5374008772267393424}
   - component: {fileID: 9023959197269347893}
   - component: {fileID: 6548089125831654143}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: flagCheckersSmall
   m_TagString: Untagged
   m_Icon: {fileID: 0}

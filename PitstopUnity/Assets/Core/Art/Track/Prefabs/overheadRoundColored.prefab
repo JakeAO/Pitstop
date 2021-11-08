@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 869953124984334208}
   - component: {fileID: 4304713742070949925}
   - component: {fileID: 2042836660947868911}
-  m_Layer: 0
+  - component: {fileID: 5484373873518626542}
+  - component: {fileID: 5813310365556574887}
+  m_Layer: 10
   m_Name: overheadRoundColored
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,3 +84,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5484373873518626542
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529561558739516730}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.41, y: 6, z: 4.33}
+  m_Center: {x: 1.74, y: 3, z: 1.6}
+--- !u!65 &5813310365556574887
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529561558739516730}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.41, y: 6, z: 4.33}
+  m_Center: {x: 16.99, y: 3, z: 1.6}

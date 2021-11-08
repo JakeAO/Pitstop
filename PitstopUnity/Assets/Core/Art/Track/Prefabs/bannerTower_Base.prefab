@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 6280333796065390427}
   - component: {fileID: 6955776387321209086}
   - component: {fileID: 5143979992979625012}
-  m_Layer: 0
+  - component: {fileID: 6377223500020097794}
+  m_Layer: 10
   m_Name: bannerTower_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6377223500020097794
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6657423044449662433}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4201343535150097431, guid: af555458b2028724e940f11ff5295d5e, type: 3}

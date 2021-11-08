@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 6645398409831633333}
   - component: {fileID: 7752640202526088720}
   - component: {fileID: 5508498802302659290}
-  m_Layer: 0
+  - component: {fileID: 1783046127609933766}
+  m_Layer: 7
   m_Name: roadRampLongCurved
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1783046127609933766
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6301347359112923919}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1275865853224044585, guid: 6ae9b6dc3e8a6c141bdadccb851d452f, type: 3}

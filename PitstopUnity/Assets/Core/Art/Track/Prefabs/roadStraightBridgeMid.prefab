@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 7856316818850736880}
   - component: {fileID: 6532723120284460373}
   - component: {fileID: 9028611526476009887}
-  m_Layer: 0
+  - component: {fileID: 3983582572314893921}
+  m_Layer: 7
   m_Name: roadStraightBridgeMid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3983582572314893921
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371528550835695690}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.91, y: 1.2662089, z: 10}
+  m_Center: {x: 5, y: 4.5668955, z: 5}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5774853256980712702}
   - component: {fileID: 7461266001369809755}
   - component: {fileID: 4643011845455099793}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: flagCheckers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 5661161233579116750}
   - component: {fileID: 6305109722131728671}
   - component: {fileID: 5002922674346100375}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}

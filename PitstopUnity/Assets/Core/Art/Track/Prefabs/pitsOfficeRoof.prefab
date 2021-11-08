@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1843612870930488052}
   - component: {fileID: 3330992149375833425}
   - component: {fileID: 711279568748126619}
-  m_Layer: 0
+  - component: {fileID: 3236182569626231973}
+  m_Layer: 10
   m_Name: pitsOfficeRoof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,3 +85,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3236182569626231973
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359529153926660174}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6412994557220102584, guid: e51222e58661f024d9fe2048a2ef1629, type: 3}

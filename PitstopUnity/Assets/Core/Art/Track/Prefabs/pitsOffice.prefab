@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1784652619100095995}
   - component: {fileID: 3416973791729912414}
   - component: {fileID: 616835672580390548}
-  m_Layer: 0
+  - component: {fileID: 6681852088936081371}
+  m_Layer: 10
   m_Name: pitsOffice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,3 +85,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6681852088936081371
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1409499924292099905}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2215642850834373861, guid: a472bb4464ea34347832f973e0e9d501, type: 3}

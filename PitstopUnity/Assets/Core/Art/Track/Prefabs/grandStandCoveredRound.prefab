@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1794249991765994739}
   - component: {fileID: 3407447322013639510}
   - component: {fileID: 625252683945236380}
-  m_Layer: 0
+  - component: {fileID: -4423188428440216224}
+  m_Layer: 10
   m_Name: grandStandCoveredRound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,3 +86,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &-4423188428440216224
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417970262657594953}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 9081726896879464740, guid: 8125b383593adbb44849608e1f5bed48, type: 3}

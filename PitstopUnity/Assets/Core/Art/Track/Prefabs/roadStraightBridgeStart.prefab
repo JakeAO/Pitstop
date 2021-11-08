@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 8004018238254191517}
   - component: {fileID: 6394029257167510584}
   - component: {fileID: 9176313981101172978}
-  m_Layer: 0
+  - component: {fileID: 549035211987142981}
+  m_Layer: 7
   m_Name: roadStraightBridgeStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,3 +84,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &549035211987142981
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7230578141290547495}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.52, y: 5.2, z: 10}
+  m_Center: {x: 5, y: 2.6, z: 5}
