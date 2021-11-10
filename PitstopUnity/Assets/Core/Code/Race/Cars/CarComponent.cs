@@ -51,7 +51,8 @@ namespace SadPumpkin.Game.Pitstop
             public float MaxSpeed = 30f;
             public AnimationCurve MaxAccelerationBySpeed = AnimationCurve.EaseInOut(0f, 10f, 1f, 0f);
             public AnimationCurve MaxDecelerationBySpeed = AnimationCurve.EaseInOut(0f, 30f, 1f, 10f);
-            public AnimationCurve AccelerationGoalByPredictDistanceRatio = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            public AnimationCurve TargetSpeedRatioByPredictDistanceRatio = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            public AnimationCurve TargetSpeedRatioByTurnRatio = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
         }
 
         private static int CAR_LAYER;
@@ -109,6 +110,16 @@ namespace SadPumpkin.Game.Pitstop
             (int x, int y) originIndex = (_visionRange.GetLength(0) / 2, 0);
             Vector3 originPos = EyePoint.localPosition;
 
+            // Calculate view direction for car
+            Vector3 vectorToGoal = _drivingTargetPoint - transform.position;
+            Vector3 directionToGoal = vectorToGoal.normalized;
+            Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
+            Quaternion lookRotation = Quaternion.Lerp(
+                towardGoal,
+                transform.rotation,
+                0.5f);
+            EyePoint.rotation = lookRotation;
+            
             // Iterate through vision points
             RaycastHit hit;
             for (int y = 0; y < _visionRange.GetLength(1); y++)
@@ -190,7 +201,7 @@ namespace SadPumpkin.Game.Pitstop
                 return result.ResultType == VisionResult.Result.Track;
             }
 
-            int GetColumnLength(VisionResult[,] vision, int column)
+            int MaxPassableFromColumn(VisionResult[,] vision, int column)
             {
                 int length = 0;
                 for (int y = 0; y < vision.GetLength(1); y++)
@@ -208,37 +219,22 @@ namespace SadPumpkin.Game.Pitstop
                 return length;
             }
 
-            int centerColumn = VisionSettings.TotalPeripheralSamples;
+            _drivingTargetPoint = transform.position + transform.forward;
 
-            // Check center column
-            int longestColumn = centerColumn;
-            int longestColumnDistance = GetColumnLength(_visionRange, centerColumn);
-
-            // Check to the left
-            for (int x = centerColumn - 1; x >= 0; x--)
+            for (int x = 0; x < _visionRange.GetLength(0); x++)
             {
-                int columnLength = GetColumnLength(_visionRange, x);
-                if (columnLength > longestColumnDistance)
+                int maxPassable = MaxPassableFromColumn(_visionRange, x);
+                if (maxPassable > 0)
                 {
-                    longestColumn = x;
-                    longestColumnDistance = columnLength;
+                    Vector3 drivingPoint = _visionRange[x, maxPassable - 1].SamplePos;
+
+                    if (Vector3.Distance(transform.position, _drivingTargetPoint) <
+                        Vector3.Distance(transform.position, drivingPoint))
+                    {
+                        _drivingTargetPoint = new Vector3(drivingPoint.x, transform.position.y, drivingPoint.z);
+                    }
                 }
             }
-
-            // Check to the right
-            for (int x = centerColumn + 1; x < _visionRange.GetLength(0); x++)
-            {
-                int columnLength = GetColumnLength(_visionRange, x);
-                if (columnLength > longestColumnDistance)
-                {
-                    longestColumn = x;
-                    longestColumnDistance = columnLength;
-                }
-            }
-
-            // Get goal position
-            VisionResult result = _visionRange[longestColumn, longestColumnDistance - 1];
-            _drivingTargetPoint = new Vector3(result.SamplePos.x, transform.position.y, result.SamplePos.z);
         }
 
         private void UpdateSteering(float timeStep)
@@ -256,29 +252,36 @@ namespace SadPumpkin.Game.Pitstop
         {
             float speedAsPercOfMaxSpeed = CurrentSpeed / ControlSettings.MaxTurnSpeed;
 
+            // Gauge distance to goal point
             Vector3 maxPredictPoint = _visionRange[VisionSettings.TotalPeripheralSamples, VisionSettings.TotalForwardSamples - 1].SamplePos;
             maxPredictPoint.y = transform.position.y;
             float distanceToGoal = Vector3.Distance(transform.position, _drivingTargetPoint);
             float distanceToMaxPredict = Vector3.Distance(transform.position, maxPredictPoint);
             float percPredictDistance = distanceToGoal / distanceToMaxPredict;
+            float speedRatioForGoalDistance = ControlSettings.TargetSpeedRatioByPredictDistanceRatio.Evaluate(percPredictDistance);
+            
+            // Gauge turning radius
+            Vector3 vectorToGoal = _drivingTargetPoint - transform.position;
+            Vector3 directionToGoal = vectorToGoal.normalized;
+            Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
+            float turnAngle = Quaternion.Angle(transform.rotation, towardGoal);
+            float percTurnAngle = turnAngle / ControlSettings.MaxTurnSpeed;
+            float speedRatioForTurnAngle = ControlSettings.TargetSpeedRatioByTurnRatio.Evaluate(percTurnAngle);
 
-            float accelerationGoalPercent = ControlSettings.AccelerationGoalByPredictDistanceRatio.Evaluate(percPredictDistance);
-            float accelerationGoal = 0f;
-            if(accelerationGoalPercent > 0)
+            float speedRatioGoal = Mathf.Min(speedRatioForGoalDistance, speedRatioForTurnAngle);
+            float speedGoal = Mathf.Clamp(speedRatioGoal * ControlSettings.MaxSpeed, 0f, ControlSettings.MaxSpeed);
+            if(speedGoal > CurrentSpeed)
             {
                 float maxAccelAtSpeed = ControlSettings.MaxAccelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
-                accelerationGoal = maxAccelAtSpeed * accelerationGoalPercent;
+                CurrentSpeed += maxAccelAtSpeed * timeStep;
             }
             else
             {
                 float maxDecelAtSpeed = ControlSettings.MaxDecelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
-                accelerationGoal = maxDecelAtSpeed * accelerationGoalPercent;
+                CurrentSpeed -= maxDecelAtSpeed * timeStep;
             }
 
-            float clampedNewSpeed = Mathf.Clamp(CurrentSpeed + accelerationGoal * timeStep, 0f, ControlSettings.MaxSpeed);
-
-            CurrentSpeed = clampedNewSpeed;
-            transform.position += transform.forward * clampedNewSpeed * timeStep;
+            transform.position += transform.forward * CurrentSpeed * timeStep;
         }
 
         private void OnDrawGizmosSelected()
