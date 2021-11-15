@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d182e859c10f45e4b837d4eb0ddfcee8, type: 3}
+  m_Name: TeamColor_Orange
+  m_EditorClassIdentifier: 
+  PawnMaterial: {fileID: 2100000, guid: cf1cd95518a915c46b057ddae67ec437, type: 2}
+  PawnColor: {r: 0.8, g: 0.42745098, b: 0.050980393, a: 1}
+  PawnTexture: {fileID: 0}
+  CarPrimaryMaterial: {fileID: 2100000, guid: f280dd8b99032b442bb3c07ffbaf595a, type: 2}
+  CarPrimaryColor: {r: 0.78431374, g: 0.48235294, b: 0.21176471, a: 1}
+  CarPrimaryTexture: {fileID: 0}
+  CarSecondaryMaterial: {fileID: 2100000, guid: a4badfde5db3be149b05d51ea6799eb5, type: 2}
+  CarSecondaryColor: {r: 0.78431374, g: 0.48235294, b: 0.21176471, a: 1}
+  CarSecondaryTexture: {fileID: 0}

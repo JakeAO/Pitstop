@@ -1,23 +1,13 @@
 using System;
+using SadPumpkin.Game.Pitstop.Core.Code.Race;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop
 {
     public class CarComponent : MonoBehaviour
     {
-        [Serializable]
-        public class CarVisionData
-        {
-            public float SampleStartRadiusMultipler = 2f;
-            public float SampleLengthRadiusMultiplier = 4f;
-            public int TotalForwardSamples = 5;
-            public int TotalPeripheralSamples = 2;
-            public AnimationCurve ForwardSampleRadiusByStep = AnimationCurve.Linear(0f, 1f, 1f, 1.5f);
-            public AnimationCurve ForwardSampleOffsetByStep = AnimationCurve.Linear(0f, 1.5f, 1f, 1.5f);
-            public AnimationCurve PeripheralSampleOffsetByForwardStep = AnimationCurve.Linear(0f, 1.5f, 1f, 3f);
-        }
-
         private struct VisionResult
         {
             public enum Result
@@ -44,62 +34,150 @@ namespace SadPumpkin.Game.Pitstop
             }
         }
 
-        [Serializable]
-        public class CarControlData
-        {
-            public float MaxTurnSpeed = 3f;
-            public float MaxSpeed = 30f;
-            public AnimationCurve MaxAccelerationBySpeed = AnimationCurve.EaseInOut(0f, 10f, 1f, 0f);
-            public AnimationCurve MaxDecelerationBySpeed = AnimationCurve.EaseInOut(0f, 30f, 1f, 10f);
-            public AnimationCurve TargetSpeedRatioByPredictDistanceRatio = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-            public AnimationCurve TargetSpeedRatioByTurnRatio = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-        }
-
         private static int CAR_LAYER;
         private static int TRACK_LAYER;
         private static int OBSTACLE_LAYER;
         private static int GOAL_LAYER;
+        private static int GROUND_LAYER;
 
-        public Transform LeftWheel;
-        public Transform RightWheel;
         public Transform EyePoint;
         public Collider CarCollider;
 
+        [ReadOnly] [ProgressBar(0f, nameof(_maxSpeed))]
         public float CurrentSpeed = 0f;
 
-        public CarVisionData VisionSettings = new CarVisionData();
-        public CarControlData ControlSettings = new CarControlData();
+        [ReadOnly] public float CurrentTurnSpeed = 0f;
+
+        [ReadOnly] [ProgressBar(0f, nameof(_maxStamina))]
+        public float CurrentDriverStamina = 0f;
+
+        [ReadOnly] [ProgressBar(0f, nameof(_maxBody))]
+        public float CurrentCarBody = 0f;
+
+        [ReadOnly] [ProgressBar(0f, nameof(_maxFuel))]
+        public float CurrentCarFuel = 0f;
+
+        [ReadOnly] public CarGoal CurrentGoal = CarGoal.Race;
+
+        [ReadOnly] public int Lap = -1;
+        
+        private Transform _transform;
+
+        private DriverStatusData _driverStatus;
+        private DriverVisionData _driverVision;
+        private CarStatusData _carStatus;
+        private CarControlData _carControl;
+        private int _lapsInRace;
 
         private VisionResult[,] _visionRange = new VisionResult[0, 0];
+        private Vector3 _raceTargetPoint;
         private Vector3 _drivingTargetPoint;
+
+        private float _aiUpdateTimer = 0f;
+
+        private float _maxSpeed;
+        private float _maxStamina;
+        private float _maxBody;
+        private float _maxFuel;
         
         private void Awake()
         {
+            _transform = transform;
+
             CAR_LAYER = LayerMask.NameToLayer("Car");
             TRACK_LAYER = LayerMask.NameToLayer("Track");
             OBSTACLE_LAYER = LayerMask.NameToLayer("Obstacle");
             GOAL_LAYER = LayerMask.NameToLayer("InteractionPoint");
+            GROUND_LAYER = LayerMask.NameToLayer("Ground");
         }
-        
-        public void UpdateCar(float timeStep)
+
+        public void Init(
+            DriverStatusData driverStatusData,
+            DriverVisionData driverVisionData,
+            CarStatusData carStatusData,
+            CarControlData carControlData,
+            int raceLaps)
         {
-            UpdateVision();
-            UpdateGoalPoint();
+            _driverStatus = driverStatusData;
+            _driverVision = driverVisionData;
+            _carStatus = carStatusData;
+            _carControl = carControlData;
+            _lapsInRace = raceLaps;
+
+            CurrentSpeed = 0f;
+            CurrentDriverStamina = _driverStatus.MaxStamina;
+            CurrentCarBody = _carStatus.MaxBodyCondition;
+            CurrentCarFuel = _carStatus.MaxFuel;
+
+            _maxSpeed = _carControl.MaxSpeed;
+            _maxStamina = _driverStatus.MaxStamina;
+            _maxBody = _carStatus.MaxBodyCondition;
+            _maxFuel = _carStatus.MaxFuel;
+        }
+
+        public void UpdateCar(float timeStep, Vector3 raceForwardPoint)
+        {
+            _raceTargetPoint = raceForwardPoint;
+
+            // Update AI
+            if (CurrentGoal != CarGoal.Idle)
+            {
+                _aiUpdateTimer -= timeStep;
+                if (_aiUpdateTimer <= 0f)
+                {
+                    UpdateVision();
+                    UpdateGoalPoint();
+
+                    _aiUpdateTimer += 1f / _driverVision.VisionUpdatesPerSecond;
+                }
+            }
+
+            // Update Movement
             UpdateSteering(timeStep);
             UpdateVelocity(timeStep);
+            UpdateHeight(timeStep);
+
+            // Update Driver & Car Status
+            UpdateDriverVitals(timeStep);
+            UpdateCarVitals(timeStep);
+
+            // TEMP TODO MOVE
+            switch (CurrentGoal)
+            {
+                case CarGoal.Race:
+                    if (CurrentCarBody < _maxBody * 0.2f ||
+                        CurrentCarFuel < _maxFuel * 0.2f ||
+                        CurrentDriverStamina < _maxStamina * 0.2f)
+                    {
+                        CurrentGoal = CarGoal.Pitstop;
+                    }
+
+                    break;
+                case CarGoal.Pitstop:
+                    if (CurrentCarBody > _maxBody * 0.8f &&
+                        CurrentCarFuel > _maxFuel * 0.8f &&
+                        CurrentDriverStamina > _maxStamina * 0.8f)
+                    {
+                        CurrentGoal = CarGoal.Race;
+                    }
+
+                    break;
+            }
         }
 
         private void UpdateVision()
         {
+            Vector3 carPosition = _transform.position;
+
             // Periphery extends in both directions from the center point
-            int fullPeripheralWidth = VisionSettings.TotalPeripheralSamples * 2 + 1;
+            int fullPeripheralWidth = _driverVision.TotalPeripheralSamples * 2 + 1;
 
             // Ensure the vision range array is the right size and clear of stale data
             if (_visionRange == null ||
                 _visionRange.GetLength(0) != fullPeripheralWidth ||
-                _visionRange.GetLength(1) != VisionSettings.TotalForwardSamples)
+                _visionRange.GetLength(1) != _driverVision.TotalForwardSamples)
             {
-                _visionRange = new VisionResult[fullPeripheralWidth, VisionSettings.TotalForwardSamples];
+                _visionRange = new VisionResult[fullPeripheralWidth, _driverVision.TotalForwardSamples];
             }
             else
             {
@@ -111,32 +189,35 @@ namespace SadPumpkin.Game.Pitstop
             Vector3 originPos = EyePoint.localPosition;
 
             // Calculate view direction for car
-            Vector3 vectorToGoal = _drivingTargetPoint - transform.position;
+            Vector3 vectorToGoal = _drivingTargetPoint - carPosition;
             Vector3 directionToGoal = vectorToGoal.normalized;
             Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
+            Vector3 vectorToRaceForward = _raceTargetPoint - carPosition;
+            Vector3 directionToRaceForward = vectorToRaceForward.normalized;
+            Quaternion towardRaceForward = Quaternion.LookRotation(directionToRaceForward, Vector3.up);
             Quaternion lookRotation = Quaternion.Lerp(
                 towardGoal,
-                transform.rotation,
+                towardRaceForward,
                 0.5f);
             EyePoint.rotation = lookRotation;
-            
+
             // Iterate through vision points
             RaycastHit hit;
             for (int y = 0; y < _visionRange.GetLength(1); y++)
             {
                 float percDistForward = y.Remap(0, _visionRange.GetLength(1), 0, 1);
-                float sampleRadius = VisionSettings.ForwardSampleRadiusByStep.Evaluate(percDistForward);
-                float forwardOffset = VisionSettings.ForwardSampleOffsetByStep.Evaluate(percDistForward);
-                float peripheralOffset = VisionSettings.PeripheralSampleOffsetByForwardStep.Evaluate(percDistForward);
+                float sampleRadius = _driverVision.ForwardSampleRadiusByStep.Evaluate(percDistForward);
+                float forwardOffset = _driverVision.ForwardSampleOffsetByStep.Evaluate(percDistForward);
+                float peripheralOffset = _driverVision.PeripheralSampleOffsetByForwardStep.Evaluate(percDistForward);
                 for (int x = 0; x < _visionRange.GetLength(0); x++)
                 {
                     Vector3 samplePos = new Vector3(
                         originPos.x + (x - originIndex.x) * peripheralOffset,
-                        originPos.y + sampleRadius * VisionSettings.SampleStartRadiusMultipler,
+                        originPos.y + sampleRadius * _driverVision.SampleStartRadiusMultipler,
                         originPos.z + (y - originIndex.y) * forwardOffset);
                     samplePos = EyePoint.TransformPoint(samplePos);
 
-                    if (Physics.SphereCast(samplePos, sampleRadius, Vector3.down, out hit, sampleRadius * VisionSettings.SampleLengthRadiusMultiplier))
+                    if (Physics.SphereCast(samplePos, sampleRadius, Vector3.down, out hit, sampleRadius * _driverVision.SampleLengthRadiusMultiplier))
                     {
                         VisionResult.Result resultType = VisionResult.Result.Invalid;
                         if (hit.collider == CarCollider)
@@ -197,8 +278,13 @@ namespace SadPumpkin.Game.Pitstop
         {
             bool GetPassableFromResult(VisionResult result)
             {
-                // TODO allow going through pit or other points sometimes
-                return result.ResultType == VisionResult.Result.Track;
+                if (result.ResultType == VisionResult.Result.Track)
+                    return true;
+                if (CurrentGoal == CarGoal.Pitstop &&
+                    result.ResultType == VisionResult.Result.Goal &&
+                    Lap < _lapsInRace - 1)
+                    return true;
+                return false;
             }
 
             int MaxPassableFromColumn(VisionResult[,] vision, int column)
@@ -219,7 +305,7 @@ namespace SadPumpkin.Game.Pitstop
                 return length;
             }
 
-            _drivingTargetPoint = transform.position + transform.forward;
+            _drivingTargetPoint = _transform.position + _transform.forward;
 
             for (int x = 0; x < _visionRange.GetLength(0); x++)
             {
@@ -228,10 +314,10 @@ namespace SadPumpkin.Game.Pitstop
                 {
                     Vector3 drivingPoint = _visionRange[x, maxPassable - 1].SamplePos;
 
-                    if (Vector3.Distance(transform.position, _drivingTargetPoint) <
-                        Vector3.Distance(transform.position, drivingPoint))
+                    if (Vector3.Distance(_transform.position, _drivingTargetPoint) <
+                        Vector3.Distance(_transform.position, drivingPoint))
                     {
-                        _drivingTargetPoint = new Vector3(drivingPoint.x, transform.position.y, drivingPoint.z);
+                        _drivingTargetPoint = new Vector3(drivingPoint.x, _transform.position.y, drivingPoint.z);
                     }
                 }
             }
@@ -239,49 +325,135 @@ namespace SadPumpkin.Game.Pitstop
 
         private void UpdateSteering(float timeStep)
         {
-            Vector3 vectorToGoal = _drivingTargetPoint - transform.position;
+            Vector3 vectorToGoal = _drivingTargetPoint - _transform.position;
             Vector3 directionToGoal = vectorToGoal.normalized;
 
             Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
-            Quaternion carRotation = Quaternion.RotateTowards(transform.rotation, towardGoal, ControlSettings.MaxTurnSpeed * timeStep);
+            Quaternion carRotation = Quaternion.RotateTowards(_transform.rotation, towardGoal, _carControl.MaxTurnSpeed * timeStep);
 
-            transform.rotation = carRotation;
+            CurrentTurnSpeed = Quaternion.Angle(_transform.rotation, carRotation);
+
+            _transform.rotation = carRotation;
         }
 
         private void UpdateVelocity(float timeStep)
         {
-            float speedAsPercOfMaxSpeed = CurrentSpeed / ControlSettings.MaxTurnSpeed;
+            Vector3 position = _transform.position;
 
-            // Gauge distance to goal point
-            Vector3 maxPredictPoint = _visionRange[VisionSettings.TotalPeripheralSamples, VisionSettings.TotalForwardSamples - 1].SamplePos;
-            maxPredictPoint.y = transform.position.y;
-            float distanceToGoal = Vector3.Distance(transform.position, _drivingTargetPoint);
-            float distanceToMaxPredict = Vector3.Distance(transform.position, maxPredictPoint);
-            float percPredictDistance = distanceToGoal / distanceToMaxPredict;
-            float speedRatioForGoalDistance = ControlSettings.TargetSpeedRatioByPredictDistanceRatio.Evaluate(percPredictDistance);
-            
-            // Gauge turning radius
-            Vector3 vectorToGoal = _drivingTargetPoint - transform.position;
-            Vector3 directionToGoal = vectorToGoal.normalized;
-            Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
-            float turnAngle = Quaternion.Angle(transform.rotation, towardGoal);
-            float percTurnAngle = turnAngle / ControlSettings.MaxTurnSpeed;
-            float speedRatioForTurnAngle = ControlSettings.TargetSpeedRatioByTurnRatio.Evaluate(percTurnAngle);
+            float speedAsPercOfMaxSpeed = CurrentSpeed / _carControl.MaxTurnSpeed;
+            float speedGoal = CurrentSpeed;
 
-            float speedRatioGoal = Mathf.Min(speedRatioForGoalDistance, speedRatioForTurnAngle);
-            float speedGoal = Mathf.Clamp(speedRatioGoal * ControlSettings.MaxSpeed, 0f, ControlSettings.MaxSpeed);
-            if(speedGoal > CurrentSpeed)
+            if (CurrentGoal == CarGoal.Idle)
             {
-                float maxAccelAtSpeed = ControlSettings.MaxAccelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
+                speedGoal = 0f;
+            }
+            else
+            {
+                // Gauge distance to goal point
+                Vector3 maxPredictPoint = _visionRange[_driverVision.TotalPeripheralSamples, _driverVision.TotalForwardSamples - 1].SamplePos;
+                maxPredictPoint.y = position.y;
+                float distanceToGoal = Vector3.Distance(position, _drivingTargetPoint);
+                float distanceToMaxPredict = Vector3.Distance(position, maxPredictPoint);
+                float percPredictDistance = distanceToGoal / distanceToMaxPredict;
+                float speedRatioForGoalDistance = _carControl.TargetSpeedRatioByPredictDistanceRatio.Evaluate(percPredictDistance);
+
+                // Gauge turning radius
+                Vector3 vectorToGoal = _drivingTargetPoint - position;
+                Vector3 directionToGoal = vectorToGoal.normalized;
+                Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
+                float turnAngle = Quaternion.Angle(_transform.rotation, towardGoal);
+                float percTurnAngle = turnAngle / _carControl.MaxTurnSpeed;
+                float speedRatioForTurnAngle = _carControl.TargetSpeedRatioByTurnRatio.Evaluate(percTurnAngle);
+
+                float speedRatioGoal = Mathf.Min(speedRatioForGoalDistance, speedRatioForTurnAngle);
+                speedGoal = speedRatioGoal * _carControl.MaxSpeed;
+            }
+
+            // Accelerate/Decelerate towards goal
+            if (speedGoal > CurrentSpeed)
+            {
+                float maxAccelAtSpeed = _carControl.MaxAccelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
                 CurrentSpeed += maxAccelAtSpeed * timeStep;
             }
             else
             {
-                float maxDecelAtSpeed = ControlSettings.MaxDecelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
+                float maxDecelAtSpeed = _carControl.MaxDecelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
                 CurrentSpeed -= maxDecelAtSpeed * timeStep;
             }
 
-            transform.position += transform.forward * CurrentSpeed * timeStep;
+            CurrentSpeed = Mathf.Clamp(CurrentSpeed, 0f, _carControl.MaxSpeed);
+            _transform.position += _transform.forward * CurrentSpeed * timeStep;
+        }
+
+        private void UpdateHeight(float timeStep)
+        {
+            if (Physics.Raycast(
+                new Ray(_transform.position + Vector3.up * 0.25f, Vector3.down),
+                out RaycastHit groundHit,
+                50f,
+                TRACK_LAYER | GROUND_LAYER))
+            {
+                Vector3 position = _transform.position;
+                position.y = groundHit.point.y;
+                _transform.position = position;
+            }
+        }
+
+        private void UpdateDriverVitals(float timeStep)
+        {
+            float staminaLoss = _driverStatus.StaminaLossBySpeedRatio.Evaluate(CurrentSpeed / _carControl.MaxSpeed);
+
+            CurrentDriverStamina = Mathf.Max(0f, CurrentDriverStamina - staminaLoss * timeStep);
+        }
+
+        private void UpdateCarVitals(float timeStep)
+        {
+            float fuelLossFromSpeed = _carStatus.FuelConsumptionBySpeedRatio.Evaluate(CurrentSpeed / _carControl.MaxSpeed);
+            float bodyLossFromSpeed = _carStatus.BodyDamageBySpeedRatio.Evaluate(CurrentSpeed / _carControl.MaxSpeed);
+            float bodyLossFromTurn = _carStatus.BodyDamageByTurnRatio.Evaluate(CurrentTurnSpeed / _carControl.MaxTurnSpeed);
+            float totalBodyLoss = bodyLossFromSpeed + bodyLossFromTurn;
+
+            CurrentCarFuel = Mathf.Max(0f, CurrentCarFuel - fuelLossFromSpeed * timeStep);
+            CurrentCarBody = Mathf.Max(0f, CurrentCarBody - totalBodyLoss * timeStep);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.rigidbody != null &&
+                collision.rigidbody.GetComponent<CarComponent>() is { } cc)
+            {
+                Debug.LogWarning($"Car \"{name}\" hit \"{cc.name}\" at a velocity of {collision.relativeVelocity.magnitude}!");
+
+                float collisionMagnitude = collision.relativeVelocity.magnitude;
+                float staminaLoss = _driverStatus.StaminaLossByHitVelocity.Evaluate(collisionMagnitude);
+                float bodyLoss = _carStatus.BodyDamageByHitVelocity.Evaluate(collisionMagnitude);
+
+                CurrentDriverStamina = Mathf.Max(0f, CurrentDriverStamina - staminaLoss);
+                CurrentCarBody = Mathf.Max(0f, CurrentDriverStamina - bodyLoss);
+            }
+        }
+
+        private void OnTriggerEnter(Collider collider)
+        {
+            if (collider.GetComponent<TrackInteractionPoint>() is { } ip)
+            {
+                Debug.Log($"Car \"{name}\" entered InteractionPoint type {ip.Type}");
+                switch (ip.Type)
+                {
+                    case TrackInteractionPointType.FinishLine:
+                        Lap++;
+                        break;
+                    case TrackInteractionPointType.PitEntrance:
+                        break;
+                    case TrackInteractionPointType.PitExit:
+                        break;
+                    case TrackInteractionPointType.HACK_TEMP_PITSTOP:
+                        CurrentDriverStamina = _maxStamina;
+                        CurrentCarBody = _maxBody;
+                        CurrentCarFuel = _maxFuel;
+                        break;
+                }
+            }
         }
 
         private void OnDrawGizmosSelected()
@@ -315,15 +487,26 @@ namespace SadPumpkin.Game.Pitstop
 
                     Gizmos.color = Color.Lerp(gizmoColor, Color.clear, 0.5f);
                     Gizmos.DrawWireSphere(
-                        Vector3.Lerp(visionResult.SamplePos, visionResult.SamplePos + Vector3.down * visionResult.SampleRadius * VisionSettings.SampleLengthRadiusMultiplier, 0.5f),
+                        Vector3.Lerp(visionResult.SamplePos, visionResult.SamplePos + Vector3.down * visionResult.SampleRadius * _driverVision.SampleLengthRadiusMultiplier, 0.5f),
                         visionResult.SampleRadius);
                 }
             }
 
             // Draw Drive Target
             Gizmos.color = Color.Lerp(Color.white, Color.clear, 0.5f);
-            Gizmos.DrawWireMesh(GetComponentInChildren<MeshCollider>().sharedMesh, _drivingTargetPoint, transform.rotation, transform.localScale);
             Gizmos.DrawLine(transform.position, _drivingTargetPoint);
+            if (CarCollider is MeshCollider asMeshCollider)
+            {
+                Gizmos.DrawWireMesh(asMeshCollider.sharedMesh, _drivingTargetPoint, CarCollider.transform.rotation, transform.localScale);
+            }
+            else
+            {
+                Gizmos.DrawWireCube(_drivingTargetPoint, transform.localScale);
+            }
+
+            // Draw Race Forward
+            Gizmos.color = Color.Lerp(Color.magenta, Color.clear, 0.5f);
+            Gizmos.DrawLine(transform.position, _raceTargetPoint);
         }
     }
 }

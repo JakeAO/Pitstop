@@ -1,21 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop
 {
     public class PawnController : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
+        [ReadOnly]
+        public PawnComponent[] PawnInstances;
 
-        // Update is called once per frame
-        void Update()
+        public void UpdatePawns(float timeStep)
         {
-        
+            foreach (PawnComponent pawnInstance in PawnInstances)
+            {
+                pawnInstance.UpdatePawn(timeStep);
+            }
         }
     }
 }
