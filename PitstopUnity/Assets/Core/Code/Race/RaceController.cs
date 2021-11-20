@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using TMPro;
@@ -30,7 +31,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
         public CameraController CameraController;
 
         public CountdownTimer CountdownTimer;
-        public RaceStatusUI RaceStatusUI;
+        public RaceHUD _raceHUD;
         public RaceOverUI RaceOverUI;
 
         [ReadOnly] public RacePathingHelper PathingHelper;
@@ -45,15 +46,19 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                 TrackController.PolePositions,
                 OpponentTeams.Prepend(PlayerTeam).ToArray(),
                 RaceLaps);
-            CameraController.ChaseCamera.Init(CarController);
+            CameraController.ChaseCamera.Init(PlayerTeam.CarInstance);
 
             CountdownTimer.ShowCountdown(5, 2, "GO!!!");
+
+            // Clear statics, we don't want anything stinky hanging around after we've used it.
+            PlayerTeam = null;
+            OpponentTeams = null;
         }
 
         public void Update()
         {
             float timeStep = Time.smoothDeltaTime;
-
+                    
             switch (Status)
             {
                 case RaceStatus.Preparing:
@@ -62,8 +67,6 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                         Status = RaceStatus.Active;
                         CarController.CarInstances.ForEach(x => x.CurrentGoal = CarGoal.Race);
                     }
-
-                    RaceStatusUI.UpdateStatus(this);
 
                     break;
                 case RaceStatus.Active:
@@ -74,14 +77,8 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                         Status = RaceStatus.Finished;
                         CarController.CarInstances.ForEach(x => x.CurrentGoal = CarGoal.Idle);
 
-                        CameraController.ChaseCamera.CurrentTarget = WinningCar;
-                        CameraController.ChaseCamera.Offset = new Vector3(0f, 7.5f, -10f);
-                        CameraController.ChaseCamera.ShowGuiControls = false;
-
-                        RaceOverUI.Show();
+                        RaceOverUI.Show(WinningCar == CarController.CarInstances[0]);
                     }
-
-                    RaceStatusUI.UpdateStatus(this);
                     
                     break;
                 case RaceStatus.Finished:
@@ -89,14 +86,16 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                     break;
             }
 
+            _raceHUD.UpdateStatus(this);
+            
             CameraController.UpdateCameras(timeStep);
         }
 
-        public IReadOnlyList<TeamData> GetRacePositions()
+        public IReadOnlyList<CarComponent> GetRacePositions()
         {
-            return OpponentTeams.Prepend(PlayerTeam)
-                .OrderByDescending(x => x.CarInstance.Lap)
-                .ThenByDescending(x => PathingHelper.GetCarPositionInRace(x.CarInstance.transform.position))
+            return CarController.CarInstances
+                .OrderByDescending(x => x.Lap)
+                .ThenByDescending(x => PathingHelper.GetCarPositionInRace(x.transform.position))
                 .ToArray();
         }
     }

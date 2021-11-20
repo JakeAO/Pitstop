@@ -43,19 +43,23 @@ namespace SadPumpkin.Game.Pitstop
         public Transform EyePoint;
         public Collider CarCollider;
 
-        [ReadOnly] [ProgressBar(0f, nameof(_maxSpeed))]
+        [ReadOnly] [ProgressBar(0f, nameof(MaxSpeed))]
         public float CurrentSpeed = 0f;
+        public float MaxSpeed => _carControl.MaxSpeed;
 
         [ReadOnly] public float CurrentTurnSpeed = 0f;
 
-        [ReadOnly] [ProgressBar(0f, nameof(_maxStamina))]
+        [ReadOnly] [ProgressBar(0f, nameof(MaxStamina))]
         public float CurrentDriverStamina = 0f;
+        public float MaxStamina => _driverStatus.MaxStamina;
 
-        [ReadOnly] [ProgressBar(0f, nameof(_maxBody))]
+        [ReadOnly] [ProgressBar(0f, nameof(MaxBody))]
         public float CurrentCarBody = 0f;
+        public float MaxBody => _carStatus.MaxBodyCondition;
 
-        [ReadOnly] [ProgressBar(0f, nameof(_maxFuel))]
+        [ReadOnly] [ProgressBar(0f, nameof(MaxFuel))]
         public float CurrentCarFuel = 0f;
+        public float MaxFuel => _carStatus.MaxFuel;
 
         [ReadOnly] public CarGoal CurrentGoal = CarGoal.Race;
 
@@ -74,11 +78,6 @@ namespace SadPumpkin.Game.Pitstop
         private Vector3 _drivingTargetPoint;
 
         private float _aiUpdateTimer = 0f;
-
-        private float _maxSpeed;
-        private float _maxStamina;
-        private float _maxBody;
-        private float _maxFuel;
         
         private void Awake()
         {
@@ -108,17 +107,14 @@ namespace SadPumpkin.Game.Pitstop
             CurrentDriverStamina = _driverStatus.MaxStamina;
             CurrentCarBody = _carStatus.MaxBodyCondition;
             CurrentCarFuel = _carStatus.MaxFuel;
-
-            _maxSpeed = _carControl.MaxSpeed;
-            _maxStamina = _driverStatus.MaxStamina;
-            _maxBody = _carStatus.MaxBodyCondition;
-            _maxFuel = _carStatus.MaxFuel;
         }
 
         public void UpdateCar(float timeStep, Vector3 raceForwardPoint)
         {
             _raceTargetPoint = raceForwardPoint;
 
+            UpdateHeight(timeStep);
+            
             // Update AI
             if (CurrentGoal != CarGoal.Idle)
             {
@@ -135,7 +131,6 @@ namespace SadPumpkin.Game.Pitstop
             // Update Movement
             UpdateSteering(timeStep);
             UpdateVelocity(timeStep);
-            UpdateHeight(timeStep);
 
             // Update Driver & Car Status
             UpdateDriverVitals(timeStep);
@@ -145,18 +140,18 @@ namespace SadPumpkin.Game.Pitstop
             switch (CurrentGoal)
             {
                 case CarGoal.Race:
-                    if (CurrentCarBody < _maxBody * 0.2f ||
-                        CurrentCarFuel < _maxFuel * 0.2f ||
-                        CurrentDriverStamina < _maxStamina * 0.2f)
+                    if (CurrentCarBody < MaxBody * 0.2f ||
+                        CurrentCarFuel < MaxFuel * 0.2f ||
+                        CurrentDriverStamina < MaxStamina * 0.2f)
                     {
                         CurrentGoal = CarGoal.Pitstop;
                     }
 
                     break;
                 case CarGoal.Pitstop:
-                    if (CurrentCarBody > _maxBody * 0.8f &&
-                        CurrentCarFuel > _maxFuel * 0.8f &&
-                        CurrentDriverStamina > _maxStamina * 0.8f)
+                    if (CurrentCarBody > MaxBody * 0.8f &&
+                        CurrentCarFuel > MaxFuel * 0.8f &&
+                        CurrentDriverStamina > MaxStamina * 0.8f)
                     {
                         CurrentGoal = CarGoal.Race;
                     }
@@ -387,16 +382,9 @@ namespace SadPumpkin.Game.Pitstop
 
         private void UpdateHeight(float timeStep)
         {
-            if (Physics.Raycast(
-                new Ray(_transform.position + Vector3.up * 0.25f, Vector3.down),
-                out RaycastHit groundHit,
-                50f,
-                TRACK_LAYER | GROUND_LAYER))
-            {
-                Vector3 position = _transform.position;
-                position.y = groundHit.point.y;
-                _transform.position = position;
-            }
+            Vector3 position = _transform.localPosition;
+            position.y = 0f;
+            _transform.localPosition = position;
         }
 
         private void UpdateDriverVitals(float timeStep)
@@ -448,9 +436,9 @@ namespace SadPumpkin.Game.Pitstop
                     case TrackInteractionPointType.PitExit:
                         break;
                     case TrackInteractionPointType.HACK_TEMP_PITSTOP:
-                        CurrentDriverStamina = _maxStamina;
-                        CurrentCarBody = _maxBody;
-                        CurrentCarFuel = _maxFuel;
+                        CurrentDriverStamina = MaxStamina;
+                        CurrentCarBody = MaxBody;
+                        CurrentCarFuel = MaxFuel;
                         break;
                 }
             }
