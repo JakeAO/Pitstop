@@ -1,9 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
-using TMPro;
 using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop.Core.Code.Race
@@ -17,26 +16,26 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
 
     public class RaceController : MonoBehaviour
     {
-        // BAD BAD HATE THIS
-        // These should be set from the main menu, we'll figure out something better later hopefully.
-        public static TeamData PlayerTeam;
-        public static TeamData[] OpponentTeams;
-
         public int RaceLaps = 3;
         [ReadOnly] public RaceStatus Status = RaceStatus.Preparing;
-        [ReadOnly] public CarComponent WinningCar = null;
 
         public TrackComponent TrackController;
         public CarController CarController;
-        public CameraController CameraController;
 
-        public CountdownTimer CountdownTimer;
-        public RaceHUD _raceHUD;
-        public RaceOverUI RaceOverUI;
+        public RaceHUD RaceHUD;
+
+        public Action<RaceStatus> RaceStatusUpdated;
 
         [ReadOnly] public RacePathingHelper PathingHelper;
 
-        public void Start()
+        public CarComponent WinningCar => _raceResults.Count == 0 ? null : _raceResults[0];
+        public IReadOnlyList<CarComponent> RaceResults => _raceResults;
+
+        private CarPositionComparer _racePositionComparer;
+        private readonly List<CarComponent> _racePositions = new List<CarComponent>(8);
+        private readonly List<CarComponent> _raceResults = new List<CarComponent>(8);
+        
+        public void Initialize(CameraController cameraController, TeamData localTeam, TeamData[] rivalTeams)
         {
             PathingHelper = new RacePathingHelper();
             PathingHelper.InitializeRacePaths();
@@ -44,21 +43,19 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
             CarController.Init(PathingHelper);
             CarController.SpawnCarInstances(
                 TrackController.PolePositions,
-                OpponentTeams.Prepend(PlayerTeam).ToArray(),
+                rivalTeams.PrependWith(localTeam).ToArray(),
                 RaceLaps);
-            CameraController.ChaseCamera.Init(PlayerTeam.CarInstance);
+            cameraController.ChaseCamera.Init(localTeam.CarInstance);
+            cameraController.SwitchCameraMode(CameraController.CameraMode.Gameplay);
 
-            CountdownTimer.ShowCountdown(5, 2, "GO!!!");
-
-            // Clear statics, we don't want anything stinky hanging around after we've used it.
-            PlayerTeam = null;
-            OpponentTeams = null;
+            _racePositionComparer = new CarPositionComparer(PathingHelper);
+            _racePositions.AddRange(CarController.CarInstances);
+            
+            RaceStatusUpdated?.Invoke(Status);
         }
 
-        public void Update()
+        public void UpdateRace(float timeStep)
         {
-            float timeStep = Time.smoothDeltaTime;
-                    
             switch (Status)
             {
                 case RaceStatus.Preparing:
@@ -66,37 +63,64 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                     {
                         Status = RaceStatus.Active;
                         CarController.CarInstances.ForEach(x => x.CurrentGoal = CarGoal.Race);
+                        RaceStatusUpdated?.Invoke(Status);
                     }
 
                     break;
                 case RaceStatus.Active:
                     CarController.UpdateCars(timeStep);
-                    WinningCar = CarController.CarInstances.FirstOrDefault(x => x.Lap >= RaceLaps);
-                    if (WinningCar)
-                    {
-                        Status = RaceStatus.Finished;
-                        CarController.CarInstances.ForEach(x => x.CurrentGoal = CarGoal.Idle);
-
-                        RaceOverUI.Show(WinningCar == CarController.CarInstances[0]);
-                    }
-                    
                     break;
                 case RaceStatus.Finished:
                     CarController.UpdateCars(timeStep);
                     break;
             }
-
-            _raceHUD.UpdateStatus(this);
             
-            CameraController.UpdateCameras(timeStep);
+            // Check for race results
+            foreach (CarComponent carInstance in CarController.CarInstances)
+            {
+                if (carInstance.Lap >= RaceLaps &&
+                    carInstance.CurrentGoal == CarGoal.Race &&
+                    !_raceResults.Contains(carInstance))
+                {
+                    carInstance.CurrentGoal = CarGoal.Idle;
+                    _raceResults.Add(carInstance);
+
+                    Status = RaceStatus.Finished;
+                    RaceStatusUpdated?.Invoke(Status);
+                }
+            }
+
+            RaceHUD.UpdateStatus();
         }
 
         public IReadOnlyList<CarComponent> GetRacePositions()
         {
-            return CarController.CarInstances
-                .OrderByDescending(x => x.Lap)
-                .ThenByDescending(x => PathingHelper.GetCarPositionInRace(x.transform.position))
-                .ToArray();
+            _racePositions.Sort(_racePositionComparer);
+            return _racePositions;
+        }
+
+        private class CarPositionComparer : IComparer<CarComponent>
+        {
+            private readonly RacePathingHelper _racePathingHelper;
+
+            public CarPositionComparer(RacePathingHelper racePathingHelper)
+            {
+                _racePathingHelper = racePathingHelper;
+            }
+
+            public int Compare(CarComponent x, CarComponent y)
+            {
+                int result = y.Lap.CompareTo(x.Lap);
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                float xProgress = _racePathingHelper.GetCarPositionInRace(x.transform.position);
+                float yProgress = _racePathingHelper.GetCarPositionInRace(y.transform.position);
+
+                return yProgress.CompareTo(xProgress);
+            }
         }
     }
 }

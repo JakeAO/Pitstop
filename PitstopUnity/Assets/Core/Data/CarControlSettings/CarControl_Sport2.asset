@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48de848fd7f4100b43074e6fa7cf424, type: 3}
   m_Name: CarControl_Sport2
   m_EditorClassIdentifier: 
-  MaxTurnSpeed: 50
-  MaxSpeed: 22
+  MaxTurnSpeed: 40
+  MaxSpeed: 20
   MaxAccelerationBySpeed:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 7.5
+      value: 3.5
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -68,21 +68,12 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0.1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 0.20378774
-      value: 0.6488043
-      inSlope: 1.4996365
-      outSlope: 1.4996365
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
@@ -101,30 +92,21 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.63820666
-      value: 0.26942953
-      inSlope: -1.4999933
-      outSlope: -1.4999933
+      inSlope: -0.0419951
+      outSlope: -0.0419951
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.07467204
     - serializedVersion: 3
       time: 1
-      value: 0.1
-      inSlope: 0
-      outSlope: 0
+      value: 0.25
+      inSlope: -2.585334
+      outSlope: -2.585334
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.020181715
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

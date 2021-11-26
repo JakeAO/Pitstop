@@ -3,24 +3,49 @@ A Sad Pumpkin Game
 Designed and Developed by
 	Jake O'Connor
 
-Assets Courtesy Of
-
+Assets Created By
+    Delapouite
+        CCTV Camera icon
+            game-icons.net/1x1/delapouite/cctv-camera.html
+        City car icon
+            game-icons.net/1x1/delapouite/city-car.html
+        Gas pump icon
+            game-icons.net/1x1/delapouite/gas-pump.html
+        Meeple icon
+            game-icons.net/1x1/delapouite/meeple.html
+        Tired eye icon
+            game-icons.net/1x1/delapouite/tired-eye.html
+	Fontspace
+		Astonish TTF
+			fontspace.com/astonish-font-f67346
 	Indie_G
 		Low Poly Props Pack
-			www.behance.net/indieG
+			behance.net/indieG
 	Kay Lousberg
 		KayKit - Character Animations
 			kaylousberg.itch.io
 	Kenney
 		Racing Kit
-			www.kenney.nl
+			kenney.nl
 	Layer Lab
 	    GUI PRO Kit - Fantasy RPG
-	        www.layerlabgames.com
+	        layerlabgames.com
+    Lorc
+        Auto repair icon
+            game-icons.net/1x1/lorc/auto-repair.html
+        Metal bar icon
+            game-icons.net/1x1/lorc/metal-bar.html
 	Quaternius
 		LowPoly Cars
 			quaternius.itch.io
+	Rakshi Games
+	    Oil Tank
+	        twitter.com/RakshiGames
+    Skoll
+        Oil drum icon
+            game-icons.net/1x1/skoll/oil-drum.html
 	Vertex Field
 		4 Industrial Barrels
+			vertexfield.wixsite.com
 		Logpile
 			vertexfield.wixsite.com

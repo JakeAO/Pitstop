@@ -1,3 +1,4 @@
+using SadPumpkin.Game.Pitstop.Core.Code.RTS;
 using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop
@@ -7,8 +8,7 @@ namespace SadPumpkin.Game.Pitstop
         public Transform TrackGeometryRoot;
         public Collider FinishLine;
         public Transform[] PolePositions;
-        public Transform[] PitPositions;
+        public PitCarLocation[] PitPositions;
         public Collider PitEntrance;
-        public Collider PitExit;
     }
 }

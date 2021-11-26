@@ -88,7 +88,7 @@ namespace SadPumpkin.Game.Pitstop
             }
             else
             {
-                throw new InvalidOperationException("No drivable paths were found!");
+                return Vector3.zero;
             }
         }
     }

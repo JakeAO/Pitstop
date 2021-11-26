@@ -39,6 +39,9 @@ namespace SadPumpkin.Game.Pitstop
         private static int OBSTACLE_LAYER;
         private static int GOAL_LAYER;
         private static int GROUND_LAYER;
+        
+        public Renderer[] Meshes;
+        public Renderer MinimapPip;
 
         public Transform EyePoint;
         public Collider CarCollider;
@@ -46,6 +49,7 @@ namespace SadPumpkin.Game.Pitstop
         [ReadOnly] [ProgressBar(0f, nameof(MaxSpeed))]
         public float CurrentSpeed = 0f;
         public float MaxSpeed => _carControl.MaxSpeed;
+        public float CurrentMaxSpeed { get; private set; }
 
         [ReadOnly] public float CurrentTurnSpeed = 0f;
 
@@ -82,7 +86,7 @@ namespace SadPumpkin.Game.Pitstop
         private void Awake()
         {
             _transform = transform;
-
+            
             CAR_LAYER = LayerMask.NameToLayer("Car");
             TRACK_LAYER = LayerMask.NameToLayer("Track");
             OBSTACLE_LAYER = LayerMask.NameToLayer("Obstacle");
@@ -104,6 +108,7 @@ namespace SadPumpkin.Game.Pitstop
             _lapsInRace = raceLaps;
 
             CurrentSpeed = 0f;
+            CurrentMaxSpeed = _carControl.MaxSpeed;
             CurrentDriverStamina = _driverStatus.MaxStamina;
             CurrentCarBody = _carStatus.MaxBodyCondition;
             CurrentCarFuel = _carStatus.MaxFuel;
@@ -111,9 +116,13 @@ namespace SadPumpkin.Game.Pitstop
 
         public void UpdateCar(float timeStep, Vector3 raceForwardPoint)
         {
-            _raceTargetPoint = raceForwardPoint;
+            if (raceForwardPoint != default)
+            {
+                _raceTargetPoint = raceForwardPoint;
+            }
 
             UpdateHeight(timeStep);
+            UpdateCurrentMaxSpeed(timeStep);
             
             // Update AI
             if (CurrentGoal != CarGoal.Idle)
@@ -124,7 +133,10 @@ namespace SadPumpkin.Game.Pitstop
                     UpdateVision();
                     UpdateGoalPoint();
 
-                    _aiUpdateTimer += 1f / _driverVision.VisionUpdatesPerSecond;
+                    float driverStaminaRatio = CurrentDriverStamina / _driverStatus.MaxStamina;
+                    float ticksUpdateMultiplier = _driverStatus.VisionModifierByStaminaRatio.Evaluate(driverStaminaRatio);
+                    float ticksPerSec = _driverVision.VisionUpdatesPerSecond * ticksUpdateMultiplier;
+                    _aiUpdateTimer += 1f / ticksPerSec;
                 }
             }
 
@@ -193,7 +205,7 @@ namespace SadPumpkin.Game.Pitstop
             Quaternion lookRotation = Quaternion.Lerp(
                 towardGoal,
                 towardRaceForward,
-                0.5f);
+                0.8f);
             EyePoint.rotation = lookRotation;
 
             // Iterate through vision points
@@ -206,10 +218,11 @@ namespace SadPumpkin.Game.Pitstop
                 float peripheralOffset = _driverVision.PeripheralSampleOffsetByForwardStep.Evaluate(percDistForward);
                 for (int x = 0; x < _visionRange.GetLength(0); x++)
                 {
+                    float forwardOffsetMultiplier = _driverVision.ForwardSampleOffsetByPeripheralStep.Evaluate(Mathf.Abs(x - originIndex.x) / (float)originIndex.x);
                     Vector3 samplePos = new Vector3(
                         originPos.x + (x - originIndex.x) * peripheralOffset,
                         originPos.y + sampleRadius * _driverVision.SampleStartRadiusMultipler,
-                        originPos.z + (y - originIndex.y) * forwardOffset);
+                        originPos.z + (y - originIndex.y) * forwardOffset * forwardOffsetMultiplier);
                     samplePos = EyePoint.TransformPoint(samplePos);
 
                     if (Physics.SphereCast(samplePos, sampleRadius, Vector3.down, out hit, sampleRadius * _driverVision.SampleLengthRadiusMultiplier))
@@ -361,7 +374,7 @@ namespace SadPumpkin.Game.Pitstop
                 float speedRatioForTurnAngle = _carControl.TargetSpeedRatioByTurnRatio.Evaluate(percTurnAngle);
 
                 float speedRatioGoal = Mathf.Min(speedRatioForGoalDistance, speedRatioForTurnAngle);
-                speedGoal = speedRatioGoal * _carControl.MaxSpeed;
+                speedGoal = speedRatioGoal * MaxSpeed;
             }
 
             // Accelerate/Decelerate towards goal
@@ -376,7 +389,7 @@ namespace SadPumpkin.Game.Pitstop
                 CurrentSpeed -= maxDecelAtSpeed * timeStep;
             }
 
-            CurrentSpeed = Mathf.Clamp(CurrentSpeed, 0f, _carControl.MaxSpeed);
+            CurrentSpeed = Mathf.Clamp(CurrentSpeed, 0f, CurrentMaxSpeed);
             _transform.position += _transform.forward * CurrentSpeed * timeStep;
         }
 
@@ -387,17 +400,28 @@ namespace SadPumpkin.Game.Pitstop
             _transform.localPosition = position;
         }
 
+        private void UpdateCurrentMaxSpeed(float timeStep)
+        {
+            float damagePercent = CurrentCarBody / MaxBody;
+            float fuelPercent = CurrentCarFuel / MaxFuel;
+
+            float damageMultiplier = _carStatus.MaxSpeedMultiplierByBodyPercentage.Evaluate(damagePercent);
+            float fuelMultiplier = _carStatus.MaxSpeedMultiplierByFuelPercentage.Evaluate(fuelPercent);
+
+            CurrentMaxSpeed = Mathf.Lerp(CurrentMaxSpeed, MaxSpeed * damageMultiplier * fuelMultiplier, timeStep);
+        }
+
         private void UpdateDriverVitals(float timeStep)
         {
-            float staminaLoss = _driverStatus.StaminaLossBySpeedRatio.Evaluate(CurrentSpeed / _carControl.MaxSpeed);
+            float staminaLoss = _driverStatus.StaminaLossBySpeedRatio.Evaluate(CurrentSpeed / MaxSpeed);
 
             CurrentDriverStamina = Mathf.Max(0f, CurrentDriverStamina - staminaLoss * timeStep);
         }
 
         private void UpdateCarVitals(float timeStep)
         {
-            float fuelLossFromSpeed = _carStatus.FuelConsumptionBySpeedRatio.Evaluate(CurrentSpeed / _carControl.MaxSpeed);
-            float bodyLossFromSpeed = _carStatus.BodyDamageBySpeedRatio.Evaluate(CurrentSpeed / _carControl.MaxSpeed);
+            float fuelLossFromSpeed = _carStatus.FuelConsumptionBySpeedRatio.Evaluate(CurrentSpeed / MaxSpeed);
+            float bodyLossFromSpeed = _carStatus.BodyDamageBySpeedRatio.Evaluate(CurrentSpeed / MaxSpeed);
             float bodyLossFromTurn = _carStatus.BodyDamageByTurnRatio.Evaluate(CurrentTurnSpeed / _carControl.MaxTurnSpeed);
             float totalBodyLoss = bodyLossFromSpeed + bodyLossFromTurn;
 

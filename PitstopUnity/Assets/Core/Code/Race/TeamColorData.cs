@@ -19,7 +19,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
 
         public void ApplyToPawn(PawnComponent pawn)
         {
-            foreach (Renderer renderer in pawn.GetComponentsInChildren<Renderer>())
+            foreach (Renderer renderer in pawn.Meshes)
             {
                 Material[] materials = renderer.sharedMaterials;
                 for (int i = 0; i < materials.Length; i++)
@@ -36,11 +36,16 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                 }
                 renderer.materials = materials;
             }
+
+            if (pawn.MinimapPip != null)
+            {
+                pawn.MinimapPip.material.color = PawnColor;
+            }
         }
 
         public void ApplyToCar(CarComponent car)
         {
-            foreach (Renderer renderer in car.GetComponentsInChildren<Renderer>())
+            foreach (Renderer renderer in car.Meshes)
             {
                 Material[] materials = renderer.sharedMaterials;
                 for (int i = 0; i < materials.Length; i++)
@@ -65,6 +70,11 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                     }
                 }
                 renderer.materials = materials;
+            }
+
+            if (car.MinimapPip != null)
+            {
+                car.MinimapPip.material.color = CarPrimaryColor;
             }
         }
     }

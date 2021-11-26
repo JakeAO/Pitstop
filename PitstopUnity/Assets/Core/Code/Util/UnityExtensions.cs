@@ -26,5 +26,23 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Util
         {
             UpdateActive(c.gameObject, active);
         }
+
+        public static bool IsApproximately(this Vector4 lhs, Vector4 rhs, float maxPerComponent = 0.1f)
+        {
+            return ((Vector3)lhs).IsApproximately(rhs, maxPerComponent)
+                   && Mathf.Abs(lhs.w - rhs.w) <= maxPerComponent;
+        }
+
+        public static bool IsApproximately(this Vector3 lhs, Vector3 rhs, float maxPerComponent = 0.1f)
+        {
+            return ((Vector2)lhs).IsApproximately(rhs, maxPerComponent)
+                   && Mathf.Abs(lhs.z - rhs.z) <= maxPerComponent;
+        }
+
+        public static bool IsApproximately(this Vector2 lhs, Vector2 rhs, float maxPerComponent = 0.1f)
+        {
+            return Mathf.Abs(lhs.x - rhs.x) <= maxPerComponent &&
+                   Mathf.Abs(lhs.y - rhs.y) <= maxPerComponent;
+        }
     }
 }

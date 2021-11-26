@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using SadPumpkin.Game.Pitstop.Core.Code;
 using SadPumpkin.Game.Pitstop.Core.Code.Race;
@@ -13,6 +14,8 @@ namespace SadPumpkin.Game.Pitstop
 {
     public class MainMenuUI : MonoBehaviour
     {
+        public InterimDataHolder DataHolder;
+        
         public TMP_Text TitleLabel;
         public CanvasGroup MainPanelGroup;
         public CanvasGroup SetupPanelGroup;
@@ -74,7 +77,14 @@ namespace SadPumpkin.Game.Pitstop
                 _carInstances.Add(instance);
             }
 
+            if (DataHolder.Peek<TeamData>(nameof(GameController.LocalTeam)) is TeamData localPlayerData)
+            {
+                _currentTeamIndex = TeamColor.ToList().IndexOf(localPlayerData.TeamColor);
+                _currentCarIndex = CarModel.ToList().IndexOf(localPlayerData.CarModel);
+            }
+
             UpdateWithTeamColor();
+            UpdateWithCarSelection();
         }
 
         private void UpdateWithTeamColor()
@@ -90,6 +100,11 @@ namespace SadPumpkin.Game.Pitstop
             {
                 teamColorData.ApplyToCar(carInstance);
             }
+        }
+
+        private void UpdateWithCarSelection()
+        {
+            CarPreviewRoot.DOLocalMoveX(-CarPreviewSpacing * _currentCarIndex, 0.5f);
         }
 
         public void MainPanelPlayButtonPressed()
@@ -119,37 +134,39 @@ namespace SadPumpkin.Game.Pitstop
             _currentCarIndex -= 1;
             if (_currentCarIndex < 0)
                 _currentCarIndex += CarModel.Length;
-            CarPreviewRoot.DOLocalMoveX(-CarPreviewSpacing * _currentCarIndex, 0.5f);
+            UpdateWithCarSelection();
         }
 
         public void NextCarPressed()
         {
             _currentCarIndex += 1;
             _currentCarIndex %= CarModel.Length;
-            CarPreviewRoot.DOLocalMoveX(-CarPreviewSpacing * _currentCarIndex, 0.5f);
+            UpdateWithCarSelection();
         }
 
         public void SetupPanelPlayButtonPressed()
         {
-            RaceController.PlayerTeam = TeamDataFromIndices(_currentTeamIndex, _currentCarIndex);
-            RaceController.OpponentTeams = new TeamData[3];
+            TeamData localTeam = TeamDataFromIndices(_currentTeamIndex, _currentCarIndex);
+            TeamData[] rivalTeams = new TeamData[5];
 
-            HashSet<int> usedColors = new HashSet<int>();
-            usedColors.Add(_currentTeamIndex);
-            
+            HashSet<int> usedColors = new HashSet<int> { _currentTeamIndex };
+
             Random random = new Random();
-            for (int i = 0; i < RaceController.OpponentTeams.Length; i++)
+            for (int i = 0; i < rivalTeams.Length; i++)
             {
-                int randomTeamColorIndex;
+                int randomTeamIndex;
                 do
                 {
-                    randomTeamColorIndex = random.Next(TeamColor.Length);
-                } while (!usedColors.Add(randomTeamColorIndex));
+                    randomTeamIndex = random.Next(TeamColor.Length);
+                } while (!usedColors.Add(randomTeamIndex));
 
-                int randomCarIndex = random.Next(CarModel.Length);
+                int randomCarIndex = random.Next(100);
 
-                RaceController.OpponentTeams[i] = TeamDataFromIndices(randomTeamColorIndex, randomCarIndex);
+                rivalTeams[i] = TeamDataFromIndices(randomTeamIndex, randomCarIndex);
             }
+
+            DataHolder.Push(localTeam, nameof(GameController.LocalTeam));
+            DataHolder.Push(rivalTeams, nameof(GameController.RivalTeams));
 
             SceneManager.LoadScene("Track1");
         }

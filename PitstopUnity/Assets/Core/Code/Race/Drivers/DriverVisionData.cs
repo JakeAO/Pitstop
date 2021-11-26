@@ -12,6 +12,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
         public int TotalPeripheralSamples = 2;
         public AnimationCurve ForwardSampleRadiusByStep = AnimationCurve.Linear(0f, 1f, 1f, 1.5f);
         public AnimationCurve ForwardSampleOffsetByStep = AnimationCurve.Linear(0f, 1.5f, 1f, 1.5f);
+        public AnimationCurve ForwardSampleOffsetByPeripheralStep = AnimationCurve.Linear(0f, 1.1f, 1f, 1f);
         public AnimationCurve PeripheralSampleOffsetByForwardStep = AnimationCurve.Linear(0f, 1.5f, 1f, 3f);
     }
 }

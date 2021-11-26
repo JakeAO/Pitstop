@@ -16,10 +16,10 @@ TagManager:
   - Ground
   - InteractionPoint
   - Obstacle
-  - 
-  - 
-  - 
-  - 
+  - MinimapPip
+  - Resource
+  - WorldUI
+  - Pawn
   - 
   - 
   - 

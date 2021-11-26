@@ -9,8 +9,10 @@ namespace SadPumpkin.Game.Pitstop
         public AnimationCurve BodyDamageBySpeedRatio;
         public AnimationCurve BodyDamageByTurnRatio;
         public AnimationCurve BodyDamageByHitVelocity;
-
+        public AnimationCurve MaxSpeedMultiplierByBodyPercentage;
+        
         public float MaxFuel;
         public AnimationCurve FuelConsumptionBySpeedRatio;
+        public AnimationCurve MaxSpeedMultiplierByFuelPercentage;
     }
 }
