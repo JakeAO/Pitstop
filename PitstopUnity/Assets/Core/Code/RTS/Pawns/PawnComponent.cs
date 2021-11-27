@@ -38,6 +38,8 @@ namespace SadPumpkin.Game.Pitstop
         public float CarryCapacity { get; private set; }
         public float MetalGatherSpeed { get; private set; }
         public float OilGatherSpeed { get; private set; }
+        public float RepairSpeed { get; private set; }
+        public float RefuelSpeed { get; private set; }
 
         private NavMeshAgent _navMeshAgent;
         private PawnControlData _controlData;
@@ -55,6 +57,8 @@ namespace SadPumpkin.Game.Pitstop
             CarryCapacity = _controlData.CarryCapacity.Evaluate(Random.Range(0f, 1f));
             MetalGatherSpeed = _controlData.MetalGatherSpeed.Evaluate(Random.Range(0f, 1f));
             OilGatherSpeed = _controlData.OilGatherSpeed.Evaluate(Random.Range(0f, 1f));
+            RepairSpeed = _controlData.RepairSpeed.Evaluate(Random.Range(0f, 1f));
+            RefuelSpeed = _controlData.RefuelSpeed.Evaluate(Random.Range(0f, 1f));
         }
 
         public void UpdatePawn(float timeStep)
@@ -74,13 +78,13 @@ namespace SadPumpkin.Game.Pitstop
                             switch (CurrentNodeTarget.NodeType)
                             {
                                 case ResourceNodeType.Metal:
-                                    float metalMineAmount = MetalGatherSpeed * timeStep;
+                                    float metalMineAmount = Mathf.Min(CurrentNodeTarget.CurrentCapacity, MetalGatherSpeed * timeStep);
                                     CurrentNodeTarget.CurrentCapacity -= metalMineAmount;
                                     CurrentCarry.Type = ResourceNodeType.Metal;
                                     CurrentCarry.Amount += metalMineAmount;
                                     break;
                                 case ResourceNodeType.Oil:
-                                    float oilMineAmount = OilGatherSpeed * timeStep;
+                                    float oilMineAmount = Mathf.Min(CurrentNodeTarget.CurrentCapacity, OilGatherSpeed * timeStep);
                                     CurrentNodeTarget.CurrentCapacity -= oilMineAmount;
                                     CurrentCarry.Type = ResourceNodeType.Oil;
                                     CurrentCarry.Amount += oilMineAmount;
@@ -118,12 +122,12 @@ namespace SadPumpkin.Game.Pitstop
                             switch (CurrentCarry.Type)
                             {
                                 case ResourceNodeType.Metal:
-                                    float metalDumpAmount = MetalGatherSpeed * 2f * timeStep;
+                                    float metalDumpAmount = Mathf.Min(CurrentCarry.Amount, MetalGatherSpeed * 2f * timeStep);
                                     CurrentCarry.Amount -= metalDumpAmount;
                                     TeamController.CurrentMetal += metalDumpAmount;
                                     break;
                                 case ResourceNodeType.Oil:
-                                    float oilDumpAmount = OilGatherSpeed * 2f * timeStep;
+                                    float oilDumpAmount = Mathf.Min(CurrentCarry.Amount, OilGatherSpeed * 2f * timeStep);
                                     CurrentCarry.Amount -= oilDumpAmount;
                                     TeamController.CurrentOil += oilDumpAmount;
                                     break;

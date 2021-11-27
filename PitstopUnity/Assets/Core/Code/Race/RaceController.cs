@@ -43,6 +43,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
             CarController.Init(PathingHelper);
             CarController.SpawnCarInstances(
                 TrackController.PolePositions,
+                TrackController.PitPositions,
                 rivalTeams.PrependWith(localTeam).ToArray(),
                 RaceLaps);
             cameraController.ChaseCamera.Init(localTeam.CarInstance);
@@ -62,14 +63,16 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
                     if (Time.timeSinceLevelLoad > 5f)
                     {
                         Status = RaceStatus.Active;
-                        CarController.CarInstances.ForEach(x => x.CurrentGoal = CarGoal.Race);
+                        CarController.CarInstances.ForEach(x =>
+                        {
+                            x.CurrentGoal = CarGoal.Race;
+                            x.CurrentStatus = CarStatus.Race;
+                        });
                         RaceStatusUpdated?.Invoke(Status);
                     }
 
                     break;
                 case RaceStatus.Active:
-                    CarController.UpdateCars(timeStep);
-                    break;
                 case RaceStatus.Finished:
                     CarController.UpdateCars(timeStep);
                     break;
@@ -79,10 +82,10 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
             foreach (CarComponent carInstance in CarController.CarInstances)
             {
                 if (carInstance.Lap >= RaceLaps &&
-                    carInstance.CurrentGoal == CarGoal.Race &&
+                    carInstance.CurrentStatus == CarStatus.Race &&
                     !_raceResults.Contains(carInstance))
                 {
-                    carInstance.CurrentGoal = CarGoal.Idle;
+                    carInstance.CurrentStatus = CarStatus.Finished;
                     _raceResults.Add(carInstance);
 
                     Status = RaceStatus.Finished;

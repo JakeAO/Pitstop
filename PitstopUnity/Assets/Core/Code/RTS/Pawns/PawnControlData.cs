@@ -11,5 +11,7 @@ namespace SadPumpkin.Game.Pitstop
         public AnimationCurve CarryCapacity;
         public AnimationCurve MetalGatherSpeed;
         public AnimationCurve OilGatherSpeed;
+        public AnimationCurve RepairSpeed;
+        public AnimationCurve RefuelSpeed;
     }
 }

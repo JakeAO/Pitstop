@@ -4,24 +4,27 @@ using SadPumpkin.Game.Pitstop.Core.Code;
 using SadPumpkin.Game.Pitstop.Core.Code.RTS;
 using SadPumpkin.Game.Pitstop.Core.Code.RTS.Props;
 using Sirenix.OdinInspector;
-using Sirenix.Utilities;
 using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop
 {
     public class TeamPawnController
     {
+        [ReadOnly] public bool Player;
         [ReadOnly] public TeamData Team;
         [ReadOnly] public PitCrewLocation CrewLocation;
         [ReadOnly] public List<PawnComponent> PawnInstances;
 
         public float CurrentMetal = 0f;
         public float CurrentOil = 0f;
-        public uint PawnsAtWork => (uint)PawnInstances.Count(x => x.CurrentNodeTarget != null);
-        public uint PawnsAtHome => (uint)PawnInstances.Count(x => x.CurrentNodeTarget == null);
-        
-        public TeamPawnController(TeamData team, PitCrewLocation pitLocation)
+        public IEnumerable<PawnComponent> PawnsAtWork => PawnInstances.Where(x => x.CurrentNodeTarget != null);
+        public IEnumerable<PawnComponent> PawnsAtHome => PawnInstances.Where(x => x.CurrentNodeTarget == null);
+        public uint NumPawnsAtWork => (uint)PawnsAtWork.Count();
+        public uint NumPawnsAtHome => (uint)PawnsAtHome.Count();
+
+        public TeamPawnController(bool playerTeam, TeamData team, PitCrewLocation pitLocation)
         {
+            Player = playerTeam;
             Team = team;
             CrewLocation = pitLocation;
         }

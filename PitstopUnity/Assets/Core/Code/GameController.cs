@@ -33,7 +33,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code
             // Initialize subcontrollers
             CameraController.Initialize();
             RaceController.Initialize(CameraController, LocalTeam, RivalTeams);
-            RtsController.Initialize(LocalTeam, RivalTeams);
+            RtsController.Initialize(LocalTeam, RivalTeams, RaceController.TrackController);
 
             // Initalize HUD
             RaceController.RaceHUD.Initialize(RaceController, RtsController.ControllerByTeam[LocalTeam], CameraController);

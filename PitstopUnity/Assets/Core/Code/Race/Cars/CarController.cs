@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SadPumpkin.Game.Pitstop.Core.Code;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ namespace SadPumpkin.Game.Pitstop
 
         public void SpawnCarInstances(
             IReadOnlyList<Transform> polePositions,
+            IReadOnlyList<PitCarLocation> pitPositions,
             IReadOnlyList<TeamData> teamDatas,
             int raceLaps)
         {
@@ -28,6 +30,7 @@ namespace SadPumpkin.Game.Pitstop
             {
                 TeamData teamData = teamDatas[i];
                 Transform polePosition = polePositions[i];
+                PitCarLocation pitPosition = pitPositions[i];
 
                 CarInstances[i] = Instantiate(teamData.CarModel.Prefab);
                 CarInstances[i].transform.SetParent(carRoot);
@@ -39,6 +42,7 @@ namespace SadPumpkin.Game.Pitstop
                     teamData.DriverVision,
                     teamData.CarStatus,
                     teamData.CarControl,
+                    pitPosition,
                     raceLaps);
                 teamData.TeamColor.ApplyToCar(CarInstances[i]);
                 teamData.CarInstance = CarInstances[i];

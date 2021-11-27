@@ -13,22 +13,30 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
         public uint PawnSpawnCount;
 
         [ReadOnly] public Dictionary<TeamData, TeamPawnController> ControllerByTeam;
-        [ReadOnly] public Dictionary<TeamData, PitCrewLocation> PitLocationByTeam;
+        [ReadOnly] public Dictionary<TeamData, PitCrewLocation> PitCrewLocationByTeam;
+        [ReadOnly] public Dictionary<TeamData, PitCarLocation> PitCarLocationByTeam;
         [ReadOnly] public Dictionary<ResourceNodeType, HashSet<ResourceNode>> ResourceNodesByType;
 
-        public void Initialize(TeamData localTeam, TeamData[] rivalTeams)
+        public void Initialize(TeamData localTeam, TeamData[] rivalTeams, TrackComponent track)
         {
             ControllerByTeam = new Dictionary<TeamData, TeamPawnController>(rivalTeams.Length + 1);
-            PitLocationByTeam = new Dictionary<TeamData, PitCrewLocation>(rivalTeams.Length + 1);
-            ControllerByTeam[localTeam] = new TeamPawnController(localTeam, PawnSpawnLocations[0]);
+            PitCrewLocationByTeam = new Dictionary<TeamData, PitCrewLocation>(rivalTeams.Length + 1);
+            PitCarLocationByTeam = new Dictionary<TeamData, PitCarLocation>(rivalTeams.Length + 1);
+            ControllerByTeam[localTeam] = new TeamPawnController(true, localTeam, PawnSpawnLocations[0]);
             ControllerByTeam[localTeam].SpawnPawns(PawnSpawnRadius, PawnSpawnCount);
-            PitLocationByTeam[localTeam] = PawnSpawnLocations[0];
+            PitCrewLocationByTeam[localTeam] = PawnSpawnLocations[0];
+            PitCrewLocationByTeam[localTeam].Initialize(ControllerByTeam[localTeam]);
+            PitCarLocationByTeam[localTeam] = track.PitPositions[0];
+            PitCarLocationByTeam[localTeam].Initialize(ControllerByTeam[localTeam]);
             for (int i = 0; i < rivalTeams.Length; i++)
             {
                 TeamData rivalTeam = rivalTeams[i];
-                ControllerByTeam[rivalTeam] = new TeamPawnController(rivalTeam, PawnSpawnLocations[i + 1]);
+                ControllerByTeam[rivalTeam] = new TeamPawnController(false, rivalTeam, PawnSpawnLocations[i + 1]);
                 ControllerByTeam[rivalTeam].SpawnPawns(PawnSpawnRadius, PawnSpawnCount);
-                PitLocationByTeam[rivalTeam] = PawnSpawnLocations[i + 1];
+                PitCrewLocationByTeam[rivalTeam] = PawnSpawnLocations[i + 1];
+                PitCrewLocationByTeam[rivalTeam].Initialize(ControllerByTeam[rivalTeam]);
+                PitCarLocationByTeam[rivalTeam] = track.PitPositions[i + 1];
+                PitCarLocationByTeam[rivalTeam].Initialize(ControllerByTeam[rivalTeam]);
             }
 
             ResourceNodesByType = FindObjectsOfType<ResourceNode>()

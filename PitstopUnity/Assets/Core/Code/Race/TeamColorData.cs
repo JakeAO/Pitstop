@@ -17,6 +17,10 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
         public Color CarSecondaryColor;
         public Texture2D CarSecondaryTexture;
 
+        [Space(15f)]
+        public Texture2D FlagTexture;
+        public Color FlagColor;
+
         public void ApplyToPawn(PawnComponent pawn)
         {
             foreach (Renderer renderer in pawn.Meshes)
@@ -76,6 +80,12 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
             {
                 car.MinimapPip.material.color = CarPrimaryColor;
             }
+        }
+
+        public void ApplyToFlag(Renderer flagRenderer)
+        {
+            flagRenderer.material.mainTexture = FlagTexture;
+            flagRenderer.material.color = FlagColor;
         }
     }
 }

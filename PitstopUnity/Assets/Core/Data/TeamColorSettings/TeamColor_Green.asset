@@ -21,3 +21,5 @@ MonoBehaviour:
   CarSecondaryMaterial: {fileID: 2100000, guid: a4badfde5db3be149b05d51ea6799eb5, type: 2}
   CarSecondaryColor: {r: 0.105882354, g: 0.39607844, b: 0.043137256, a: 1}
   CarSecondaryTexture: {fileID: 0}
+  FlagTexture: {fileID: 0}
+  FlagColor: {r: 0.105882354, g: 0.39607844, b: 0.043137256, a: 1}

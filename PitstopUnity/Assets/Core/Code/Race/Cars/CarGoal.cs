@@ -2,8 +2,9 @@ namespace SadPumpkin.Game.Pitstop
 {
     public enum CarGoal : int
     {
-        Idle = 0,
+        Invalid = 0,
         Race = 1,
-        Pitstop = 2,
+        GoToPit = 2,
+        PitStop = 3,
     }
 }

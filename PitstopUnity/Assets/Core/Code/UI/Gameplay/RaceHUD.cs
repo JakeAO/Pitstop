@@ -67,7 +67,7 @@ namespace SadPumpkin.Game.Pitstop
         {
             MetalStockLabel.text = Mathf.RoundToInt(_teamController.CurrentMetal).ToString();
             OilStockLabel.text = Mathf.RoundToInt(_teamController.CurrentOil).ToString();
-            PawnStockLabel.text = $"{_teamController.PawnsAtWork}/{_teamController.PawnsAtHome}";
+            PawnStockLabel.text = $"{_teamController.NumPawnsAtWork}/{_teamController.NumPawnsAtHome}";
 
             MinimapCamera.targetTexture = MinimapRenderTexture;
 

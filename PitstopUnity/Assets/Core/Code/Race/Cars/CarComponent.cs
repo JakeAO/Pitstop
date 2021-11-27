@@ -1,5 +1,6 @@
 using System;
 using SadPumpkin.Game.Pitstop.Core.Code.Race;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -56,6 +57,7 @@ namespace SadPumpkin.Game.Pitstop
         [ReadOnly] [ProgressBar(0f, nameof(MaxStamina))]
         public float CurrentDriverStamina = 0f;
         public float MaxStamina => _driverStatus.MaxStamina;
+        public float StaminaRecoverySpeed => _driverStatus.StaminaRecovery;
 
         [ReadOnly] [ProgressBar(0f, nameof(MaxBody))]
         public float CurrentCarBody = 0f;
@@ -65,6 +67,7 @@ namespace SadPumpkin.Game.Pitstop
         public float CurrentCarFuel = 0f;
         public float MaxFuel => _carStatus.MaxFuel;
 
+        [ReadOnly] public CarStatus CurrentStatus = CarStatus.Idle;
         [ReadOnly] public CarGoal CurrentGoal = CarGoal.Race;
 
         [ReadOnly] public int Lap = -1;
@@ -75,11 +78,16 @@ namespace SadPumpkin.Game.Pitstop
         private DriverVisionData _driverVision;
         private CarStatusData _carStatus;
         private CarControlData _carControl;
+        private PitCarLocation _pitLocation;
         private int _lapsInRace;
 
         private VisionResult[,] _visionRange = new VisionResult[0, 0];
         private Vector3 _raceTargetPoint;
         private Vector3 _drivingTargetPoint;
+
+        public Vector3 CarForward => _transform.forward;
+        public Vector3 RaceForward => (_raceTargetPoint - _transform.position).normalized;
+        public Vector3 DriveForward => (_drivingTargetPoint - _transform.position).normalized;
 
         private float _aiUpdateTimer = 0f;
         
@@ -99,12 +107,14 @@ namespace SadPumpkin.Game.Pitstop
             DriverVisionData driverVisionData,
             CarStatusData carStatusData,
             CarControlData carControlData,
+            PitCarLocation pitLocation,
             int raceLaps)
         {
             _driverStatus = driverStatusData;
             _driverVision = driverVisionData;
             _carStatus = carStatusData;
             _carControl = carControlData;
+            _pitLocation = pitLocation;
             _lapsInRace = raceLaps;
 
             CurrentSpeed = 0f;
@@ -123,9 +133,9 @@ namespace SadPumpkin.Game.Pitstop
 
             UpdateHeight(timeStep);
             UpdateCurrentMaxSpeed(timeStep);
-            
+
             // Update AI
-            if (CurrentGoal != CarGoal.Idle)
+            if (CurrentStatus != CarStatus.Idle)
             {
                 _aiUpdateTimer -= timeStep;
                 if (_aiUpdateTimer <= 0f)
@@ -147,29 +157,6 @@ namespace SadPumpkin.Game.Pitstop
             // Update Driver & Car Status
             UpdateDriverVitals(timeStep);
             UpdateCarVitals(timeStep);
-
-            // TEMP TODO MOVE
-            switch (CurrentGoal)
-            {
-                case CarGoal.Race:
-                    if (CurrentCarBody < MaxBody * 0.2f ||
-                        CurrentCarFuel < MaxFuel * 0.2f ||
-                        CurrentDriverStamina < MaxStamina * 0.2f)
-                    {
-                        CurrentGoal = CarGoal.Pitstop;
-                    }
-
-                    break;
-                case CarGoal.Pitstop:
-                    if (CurrentCarBody > MaxBody * 0.8f &&
-                        CurrentCarFuel > MaxFuel * 0.8f &&
-                        CurrentDriverStamina > MaxStamina * 0.8f)
-                    {
-                        CurrentGoal = CarGoal.Race;
-                    }
-
-                    break;
-            }
         }
 
         private void UpdateVision()
@@ -205,7 +192,7 @@ namespace SadPumpkin.Game.Pitstop
             Quaternion lookRotation = Quaternion.Lerp(
                 towardGoal,
                 towardRaceForward,
-                0.8f);
+                0.9f);
             EyePoint.rotation = lookRotation;
 
             // Iterate through vision points
@@ -288,7 +275,7 @@ namespace SadPumpkin.Game.Pitstop
             {
                 if (result.ResultType == VisionResult.Result.Track)
                     return true;
-                if (CurrentGoal == CarGoal.Pitstop &&
+                if (CurrentGoal == CarGoal.GoToPit &&
                     result.ResultType == VisionResult.Result.Goal &&
                     Lap < _lapsInRace - 1)
                     return true;
@@ -329,6 +316,13 @@ namespace SadPumpkin.Game.Pitstop
                     }
                 }
             }
+
+            // If we're trying to get to the pit, target it
+            if (CurrentGoal == CarGoal.GoToPit &&
+                Vector3.Distance(_transform.position, _pitLocation.transform.position) < 20f)
+            {
+                _drivingTargetPoint = _pitLocation.transform.position;
+            }
         }
 
         private void UpdateSteering(float timeStep)
@@ -348,12 +342,18 @@ namespace SadPumpkin.Game.Pitstop
         {
             Vector3 position = _transform.position;
 
+            float accelerationMultiplier = 1f;
             float speedAsPercOfMaxSpeed = CurrentSpeed / _carControl.MaxTurnSpeed;
             float speedGoal = CurrentSpeed;
 
-            if (CurrentGoal == CarGoal.Idle)
+            if (CurrentStatus == CarStatus.Idle)
+            { 
+                speedGoal = Mathf.Lerp(speedGoal, 0f, timeStep);
+            }
+            else if (CurrentGoal == CarGoal.PitStop)
             {
                 speedGoal = 0f;
+                accelerationMultiplier = 5f;
             }
             else
             {
@@ -381,12 +381,12 @@ namespace SadPumpkin.Game.Pitstop
             if (speedGoal > CurrentSpeed)
             {
                 float maxAccelAtSpeed = _carControl.MaxAccelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
-                CurrentSpeed += maxAccelAtSpeed * timeStep;
+                CurrentSpeed += maxAccelAtSpeed * timeStep * accelerationMultiplier;
             }
             else
             {
                 float maxDecelAtSpeed = _carControl.MaxDecelerationBySpeed.Evaluate(speedAsPercOfMaxSpeed);
-                CurrentSpeed -= maxDecelAtSpeed * timeStep;
+                CurrentSpeed -= maxDecelAtSpeed * timeStep * accelerationMultiplier;
             }
 
             CurrentSpeed = Mathf.Clamp(CurrentSpeed, 0f, CurrentMaxSpeed);

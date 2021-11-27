@@ -61,7 +61,7 @@ namespace SadPumpkin.Game.Pitstop
             (float distance, float percent, SplineComputer path) pathPoint = default;
 
             // If we're aiming for the pitstop, see if we're within range to start following that path
-            if (carGoal == CarGoal.Pitstop &&
+            if (carGoal == CarGoal.GoToPit &&
                 PathingComponents.TryGetValue(RacePathingType.Pit, out var pathList))
             {
                 pathPoint = pathList

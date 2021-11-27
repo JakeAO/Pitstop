@@ -9,5 +9,6 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
         public AnimationCurve StaminaLossBySpeedRatio;
         public AnimationCurve StaminaLossByHitVelocity;
         public AnimationCurve VisionModifierByStaminaRatio;
+        public float StaminaRecovery;
     }
 }

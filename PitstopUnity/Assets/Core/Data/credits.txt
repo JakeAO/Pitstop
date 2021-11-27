@@ -1,51 +1,51 @@
-A Sad Pumpkin Game
+<style="Title"><size=40>A <color=#FF8000>Sad Pumpkin</color> Game</size></style>
 
-Designed and Developed by
-	Jake O'Connor
+<style="H2"><size=30>Designed and Developed by</size></style>
+    <b>Jake O'Connor</b>
 
-Assets Created By
-    Delapouite
-        CCTV Camera icon
-            game-icons.net/1x1/delapouite/cctv-camera.html
-        City car icon
-            game-icons.net/1x1/delapouite/city-car.html
-        Gas pump icon
-            game-icons.net/1x1/delapouite/gas-pump.html
-        Meeple icon
-            game-icons.net/1x1/delapouite/meeple.html
-        Tired eye icon
-            game-icons.net/1x1/delapouite/tired-eye.html
-	Fontspace
-		Astonish TTF
-			fontspace.com/astonish-font-f67346
-	Indie_G
-		Low Poly Props Pack
-			behance.net/indieG
-	Kay Lousberg
-		KayKit - Character Animations
-			kaylousberg.itch.io
-	Kenney
-		Racing Kit
-			kenney.nl
-	Layer Lab
-	    GUI PRO Kit - Fantasy RPG
-	        layerlabgames.com
-    Lorc
-        Auto repair icon
-            game-icons.net/1x1/lorc/auto-repair.html
-        Metal bar icon
-            game-icons.net/1x1/lorc/metal-bar.html
-	Quaternius
-		LowPoly Cars
-			quaternius.itch.io
-	Rakshi Games
-	    Oil Tank
-	        twitter.com/RakshiGames
-    Skoll
-        Oil drum icon
-            game-icons.net/1x1/skoll/oil-drum.html
-	Vertex Field
-		4 Industrial Barrels
-			vertexfield.wixsite.com
-		Logpile
-			vertexfield.wixsite.com
+<style="H2"><size=30>Assets Created By</size></style>
+    <b>Delapouite</b>
+        <style="C3">CCTV Camera icon</style>
+            <link="game-icons.net/1x1/delapouite/cctv-camera.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/cctv-camera.html</link></color></size>
+        <style="C3">City car icon</style>
+            <link="game-icons.net/1x1/delapouite/city-car.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/city-car.html</link></color></size>
+        <style="C3">Gas pump icon</style>
+            <link="game-icons.net/1x1/delapouite/gas-pump.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/gas-pump.html</link></color></size>
+        <style="C3">Meeple icon</style>
+            <link="game-icons.net/1x1/delapouite/meeple.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/meeple.html</link></color></size>
+        <style="C3">Tired eye icon</style>
+            <link="game-icons.net/1x1/delapouite/tired-eye.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/tired-eye.html</link></color></size>
+    <b>Indie_G</b>
+        <style="C3">Low Poly Props Pack</style>
+            <link="behance.net/indieG"><color=#DDDDFF><size=16>behance.net/indieG</link></color></size>
+    <b>Kay Lousberg</b>
+        <style="C3">KayKit - Character Animations</style>
+            <link="kaylousberg.itch.io"><color=#DDDDFF><size=16>kaylousberg.itch.io</link></color></size>
+    <b>Kenney</b>
+        <style="C3">Racing Kit</style>
+            <link="kenney.nl"><color=#DDDDFF><size=16>kenney.nl</link></color></size>
+    <b>Layer Lab</b>
+        <style="C3">GUI PRO Kit - Fantasy RPG</style>
+            <link="layerlabgames.com"><color=#DDDDFF><size=16>layerlabgames.com</link></color></size>
+    <b>Lorc</b>
+        <style="C3">Auto repair icon</style>
+            <link="game-icons.net/1x1/lorc/auto-repair.html"><color=#DDDDFF><size=16>game-icons.net/1x1/lorc/auto-repair.html</link></color></size>
+        <style="C3">Metal bar icon</style>
+            <link="game-icons.net/1x1/lorc/metal-bar.html"><color=#DDDDFF><size=16>game-icons.net/1x1/lorc/metal-bar.html</link></color></size>
+    <b>Quaternius</b>
+        <style="C3">LowPoly Cars</style>
+            <link="quaternius.itch.io"><color=#DDDDFF><size=16>quaternius.itch.io</link></color></size>
+    <b>Rakshi Games</b>
+        <style="C3">Oil Tank</style>
+            <link="twitter.com/RakshiGames"><color=#DDDDFF><size=16>twitter.com/RakshiGames</link></color></size>
+    <b>Skoll</b>
+        <style="C3">Oil drum icon</style>
+            <link="game-icons.net/1x1/skoll/oil-drum.html"><color=#DDDDFF><size=16>game-icons.net/1x1/skoll/oil-drum.html</link></color></size>
+    <b>Vertex Field</b>
+        <style="C3">4 Industrial Barrels</style>
+            <link="vertexfield.wixsite.com/home"><color=#DDDDFF><size=16>vertexfield.wixsite.com</link></color></size>
+        <style="C3">Logpile</style>
+            <link="vertexfield.wixsite.com/home"><color=#DDDDFF><size=16>vertexfield.wixsite.com</link></color></size>
+    <b>Vladimir Nikolic</b>
+        <style="C3">Astonish TTF</style>
+            <link="fontspace.com/astonish-font-f67346"><color=#DDDDFF><size=16>fontspace.com/astonish-font-f67346</link></color></size>

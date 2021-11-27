@@ -19,7 +19,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Props
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            InteractionUI.UpdateActive(true);
+            InteractionUI.UpdateActive(!InteractionUI.gameObject.activeSelf);
         }
     }
 }
