@@ -37,7 +37,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
                     (CarInstance.CurrentCarFuel < CarInstance.MaxFuel && _teamPawnController.CurrentOil > 0f) ||
                     CarInstance.CurrentDriverStamina < CarInstance.MaxStamina)
                 {
-                    float timeStep = Time.fixedTime;
+                    float timeStep = Time.deltaTime;
                     float maxPossibleRepairValue = 0f;
                     float maxPossibleRefuelValue = 0f;
                     foreach (PawnComponent worker in AvailableWorkers)

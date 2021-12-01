@@ -343,9 +343,9 @@ namespace SadPumpkin.Game.Pitstop
             Vector3 position = _transform.position;
 
             float accelerationMultiplier = 1f;
-            float speedAsPercOfMaxSpeed = CurrentSpeed / _carControl.MaxTurnSpeed;
+            float speedAsPercOfMaxSpeed = CurrentSpeed / CurrentMaxSpeed;
             float speedGoal = CurrentSpeed;
-
+            
             if (CurrentStatus == CarStatus.Idle)
             { 
                 speedGoal = Mathf.Lerp(speedGoal, 0f, timeStep);
@@ -370,7 +370,7 @@ namespace SadPumpkin.Game.Pitstop
                 Vector3 directionToGoal = vectorToGoal.normalized;
                 Quaternion towardGoal = Quaternion.LookRotation(directionToGoal, Vector3.up);
                 float turnAngle = Quaternion.Angle(_transform.rotation, towardGoal);
-                float percTurnAngle = turnAngle / _carControl.MaxTurnSpeed;
+                float percTurnAngle = turnAngle / (_carControl.MaxTurnSpeed * timeStep);
                 float speedRatioForTurnAngle = _carControl.TargetSpeedRatioByTurnRatio.Evaluate(percTurnAngle);
 
                 float speedRatioGoal = Mathf.Min(speedRatioForGoalDistance, speedRatioForTurnAngle);
@@ -422,7 +422,7 @@ namespace SadPumpkin.Game.Pitstop
         {
             float fuelLossFromSpeed = _carStatus.FuelConsumptionBySpeedRatio.Evaluate(CurrentSpeed / MaxSpeed);
             float bodyLossFromSpeed = _carStatus.BodyDamageBySpeedRatio.Evaluate(CurrentSpeed / MaxSpeed);
-            float bodyLossFromTurn = _carStatus.BodyDamageByTurnRatio.Evaluate(CurrentTurnSpeed / _carControl.MaxTurnSpeed);
+            float bodyLossFromTurn = _carStatus.BodyDamageByTurnRatio.Evaluate(CurrentTurnSpeed / (_carControl.MaxTurnSpeed * timeStep));
             float totalBodyLoss = bodyLossFromSpeed + bodyLossFromTurn;
 
             CurrentCarFuel = Mathf.Max(0f, CurrentCarFuel - fuelLossFromSpeed * timeStep);
@@ -507,18 +507,24 @@ namespace SadPumpkin.Game.Pitstop
             // Draw Drive Target
             Gizmos.color = Color.Lerp(Color.white, Color.clear, 0.5f);
             Gizmos.DrawLine(transform.position, _drivingTargetPoint);
+            Gizmos.color = Color.Lerp(Color.magenta, Color.clear, 0.5f);
+            Gizmos.DrawLine(_drivingTargetPoint, _raceTargetPoint);
             if (CarCollider is MeshCollider asMeshCollider)
             {
+                Gizmos.color = Color.Lerp(Color.white, Color.clear, 0.5f);
                 Gizmos.DrawWireMesh(asMeshCollider.sharedMesh, _drivingTargetPoint, CarCollider.transform.rotation, transform.localScale);
+                Gizmos.color = Color.Lerp(Color.magenta, Color.clear, 0.5f);
+                Gizmos.DrawWireMesh(asMeshCollider.sharedMesh, _raceTargetPoint, CarCollider.transform.rotation, transform.localScale);
             }
             else
             {
+                Gizmos.color = Color.Lerp(Color.white, Color.clear, 0.5f);
                 Gizmos.DrawWireCube(_drivingTargetPoint, transform.localScale);
+                Gizmos.color = Color.Lerp(Color.magenta, Color.clear, 0.5f);
+                Gizmos.DrawWireCube(_raceTargetPoint, transform.localScale);
             }
 
             // Draw Race Forward
-            Gizmos.color = Color.Lerp(Color.magenta, Color.clear, 0.5f);
-            Gizmos.DrawLine(transform.position, _raceTargetPoint);
         }
     }
 }
