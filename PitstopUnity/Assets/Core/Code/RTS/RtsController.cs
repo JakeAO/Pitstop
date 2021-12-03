@@ -22,7 +22,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
             ControllerByTeam = new Dictionary<TeamData, TeamPawnController>(rivalTeams.Length + 1);
             PitCrewLocationByTeam = new Dictionary<TeamData, PitCrewLocation>(rivalTeams.Length + 1);
             PitCarLocationByTeam = new Dictionary<TeamData, PitCarLocation>(rivalTeams.Length + 1);
-            ControllerByTeam[localTeam] = new TeamPawnController(true, localTeam, PawnSpawnLocations[0]);
+            ControllerByTeam[localTeam] = new TeamPawnController_Player(localTeam, PawnSpawnLocations[0]);
             ControllerByTeam[localTeam].SpawnPawns(PawnSpawnRadius, PawnSpawnCount);
             PitCrewLocationByTeam[localTeam] = PawnSpawnLocations[0];
             PitCrewLocationByTeam[localTeam].Initialize(ControllerByTeam[localTeam]);
@@ -31,7 +31,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
             for (int i = 0; i < rivalTeams.Length; i++)
             {
                 TeamData rivalTeam = rivalTeams[i];
-                ControllerByTeam[rivalTeam] = new TeamPawnController(false, rivalTeam, PawnSpawnLocations[i + 1]);
+                ControllerByTeam[rivalTeam] = new TeamPawnController_AI(rivalTeam, PawnSpawnLocations[i + 1]);
                 ControllerByTeam[rivalTeam].SpawnPawns(PawnSpawnRadius, PawnSpawnCount);
                 PitCrewLocationByTeam[rivalTeam] = PawnSpawnLocations[i + 1];
                 PitCrewLocationByTeam[rivalTeam].Initialize(ControllerByTeam[rivalTeam]);

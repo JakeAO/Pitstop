@@ -319,6 +319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52369bf0fdec49d49c83822ebeb98899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainMenuScene: MainMenu
   WinnerObject: {fileID: 1032113401104938111}
   LoserObject: {fileID: 342628454506463378}
 --- !u!1001 &1032113401136925008

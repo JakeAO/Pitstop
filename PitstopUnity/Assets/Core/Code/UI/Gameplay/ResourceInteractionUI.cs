@@ -23,8 +23,8 @@ namespace SadPumpkin.Game.Pitstop
         public ResourceNode Node;
 
         private TeamData _localTeam;
-        private TeamPawnController _localPawnController;
-        
+        private TeamPawnController_Player _localPawnController;
+
         private GameplayCamera _gameplayCamera;
 
         private void OnEnable()
@@ -33,6 +33,7 @@ namespace SadPumpkin.Game.Pitstop
             {
                 RtsController = FindObjectOfType<RtsController>();
             }
+
             if (!_gameplayCamera)
             {
                 _gameplayCamera = FindObjectOfType<GameplayCamera>();
@@ -45,7 +46,7 @@ namespace SadPumpkin.Game.Pitstop
             OilIcon.UpdateActive(Node.NodeType == ResourceNodeType.Oil);
 
             _localTeam = DataHolder.Peek<TeamData>(nameof(GameController.LocalTeam));
-            _localPawnController = RtsController.ControllerByTeam[_localTeam];
+            _localPawnController = (TeamPawnController_Player)RtsController.ControllerByTeam[_localTeam];
         }
 
         private void OnDisable()

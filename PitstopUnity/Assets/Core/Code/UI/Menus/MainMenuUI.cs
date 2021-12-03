@@ -8,12 +8,15 @@ using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 using Random = System.Random;
 
 namespace SadPumpkin.Game.Pitstop
 {
     public class MainMenuUI : MonoBehaviour
     {
+        public string GameplayScene;
+        
         public InterimDataHolder DataHolder;
         
         public TMP_Text TitleLabel;
@@ -32,6 +35,7 @@ namespace SadPumpkin.Game.Pitstop
         [AssetList] public DriverVisionData[] DriverVision;
         [AssetList] public PawnModelData[] PawnModel;
         [AssetList] public PawnControlData[] PawnControl;
+        [AssetList] public PawnAIData[] PawnAI;
 
         private readonly List<PawnComponent> _pawnInstances = new List<PawnComponent>(10);
         private readonly List<CarComponent> _carInstances = new List<CarComponent>(10);
@@ -168,7 +172,7 @@ namespace SadPumpkin.Game.Pitstop
             DataHolder.Push(localTeam, nameof(GameController.LocalTeam));
             DataHolder.Push(rivalTeams, nameof(GameController.RivalTeams));
 
-            SceneManager.LoadScene("Track1");
+            SceneManager.LoadScene(GameplayScene);
         }
 
         private TeamData TeamDataFromIndices(int teamIndex, int carIndex)
@@ -178,6 +182,7 @@ namespace SadPumpkin.Game.Pitstop
                 TeamColor = TeamColor[teamIndex % TeamColor.Length],
                 PawnModel = PawnModel[teamIndex % PawnModel.Length],
                 PawnControl = PawnControl[teamIndex % PawnControl.Length],
+                PawnAI = PawnAI[teamIndex % PawnAI.Length],
                 DriverStatus = DriverStatus[carIndex % DriverStatus.Length],
                 DriverVision = DriverVision[carIndex % DriverVision.Length],
                 CarModel = CarModel[carIndex % CarModel.Length],

@@ -15,6 +15,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code
 
         public PawnModelData PawnModel;
         public PawnControlData PawnControl;
+        public PawnAIData PawnAI;
 
         public CarComponent CarInstance;
     }

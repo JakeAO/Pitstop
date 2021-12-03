@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
@@ -20,6 +21,24 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Props
         public void OnPointerClick(PointerEventData eventData)
         {
             InteractionUI.UpdateActive(!InteractionUI.gameObject.activeSelf);
+        }
+
+        private void LateUpdate()
+        {
+            if (CurrentCapacity <= 0f)
+            {
+                foreach (PawnComponent assignedPawn in AssignedPawns)
+                {
+                    assignedPawn.CurrentGoal = PawnGoal.ReturnToPit;
+                    assignedPawn.ActivelyMining = false;
+                    assignedPawn.CurrentNodeTarget = null;
+                }
+                AssignedPawns.Clear();
+                
+                // TODO something
+                
+                Destroy(gameObject);
+            }
         }
     }
 }

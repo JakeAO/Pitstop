@@ -15,6 +15,9 @@
             <link="game-icons.net/1x1/delapouite/meeple.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/meeple.html</link></color></size>
         <style="C3">Tired eye icon</style>
             <link="game-icons.net/1x1/delapouite/tired-eye.html"><color=#DDDDFF><size=16>game-icons.net/1x1/delapouite/tired-eye.html</link></color></size>
+    <b>Eric Matyas</b>
+        <style="C3">8-BIT MAYHEM</style>
+            <link="soundimage.org"><color=#DDDDFF><size=16>soundimage.org</link></color></size>
     <b>Indie_G</b>
         <style="C3">Low Poly Props Pack</style>
             <link="behance.net/indieG"><color=#DDDDFF><size=16>behance.net/indieG</link></color></size>

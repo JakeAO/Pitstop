@@ -17,6 +17,8 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
         public void Initialize(TeamPawnController teamPawnController)
         {
             _teamPawnController = teamPawnController;
+
+            gameObject.SetActive(true);
         }
 
         private void OnTriggerEnter(Collider other)

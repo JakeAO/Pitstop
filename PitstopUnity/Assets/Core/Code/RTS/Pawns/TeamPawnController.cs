@@ -8,28 +8,29 @@ using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop
 {
-    public class TeamPawnController
+    public abstract class TeamPawnController
     {
-        [ReadOnly] public bool Player;
+        public abstract bool Player { get; }
+        
         [ReadOnly] public TeamData Team;
         [ReadOnly] public PitCrewLocation CrewLocation;
         [ReadOnly] public List<PawnComponent> PawnInstances;
 
         public float CurrentMetal = 0f;
         public float CurrentOil = 0f;
+        
         public IEnumerable<PawnComponent> PawnsAtWork => PawnInstances.Where(x => x.CurrentNodeTarget != null);
         public IEnumerable<PawnComponent> PawnsAtHome => PawnInstances.Where(x => x.CurrentNodeTarget == null);
         public uint NumPawnsAtWork => (uint)PawnsAtWork.Count();
         public uint NumPawnsAtHome => (uint)PawnsAtHome.Count();
 
-        public TeamPawnController(bool playerTeam, TeamData team, PitCrewLocation pitLocation)
+        protected TeamPawnController(TeamData team, PitCrewLocation pitLocation)
         {
-            Player = playerTeam;
             Team = team;
             CrewLocation = pitLocation;
         }
 
-        public void SpawnPawns(float spawnRadius, uint pawnCount)
+        public virtual void SpawnPawns(float spawnRadius, uint pawnCount)
         {
             PawnInstances = new List<PawnComponent>((int)pawnCount);
             for (int i = 0; i < pawnCount; i++)
@@ -51,7 +52,7 @@ namespace SadPumpkin.Game.Pitstop
             }
         }
 
-        public void UpdatePawns(float timeStep)
+        public virtual void UpdatePawns(float timeStep)
         {
             foreach (PawnComponent pawnInstance in PawnInstances)
             {
@@ -59,7 +60,7 @@ namespace SadPumpkin.Game.Pitstop
             }
         }
 
-        public void RequestPawnAdd(ResourceNode node)
+        public bool RequestPawnAdd(ResourceNode node)
         {
             PawnComponent pawnClosestToNode = PawnInstances
                 .Where(x =>
@@ -74,10 +75,13 @@ namespace SadPumpkin.Game.Pitstop
                 pawnClosestToNode.CurrentNodeTarget = node;
                 pawnClosestToNode.CurrentGoal = PawnGoal.Gather;
                 node.AssignedPawns.Add(pawnClosestToNode);
+                return true;
             }
+
+            return false;
         }
 
-        public void RequestPawnRemove(ResourceNode node)
+        public bool RequestPawnRemove(ResourceNode node)
         {
             PawnComponent pawnFarthestFromNode = PawnInstances
                 .Where(x => x.CurrentNodeTarget == node)
@@ -89,7 +93,10 @@ namespace SadPumpkin.Game.Pitstop
                 pawnFarthestFromNode.CurrentNodeTarget = null;
                 pawnFarthestFromNode.CurrentGoal = PawnGoal.ReturnToPit;
                 node.AssignedPawns.Remove(pawnFarthestFromNode);
+                return true;
             }
+
+            return false;
         }
 
         public uint CountAssignedPawns(ResourceNode node)

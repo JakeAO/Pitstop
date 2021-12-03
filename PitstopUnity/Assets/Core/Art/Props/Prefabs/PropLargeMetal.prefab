@@ -56,11 +56,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 961eb358933741ac82992899f9f47ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NodeType: 1
-  CurrentCapacity: 100
-  MaxPawns: 5
-  CurrentPawns: 0
   InteractionUI: {fileID: 123592030372008700}
+  NodeType: 1
+  CurrentCapacity: 250
+  MaxPawns: 5
 --- !u!135 &1119562083870201688
 SphereCollider:
   m_ObjectHideFlags: 0

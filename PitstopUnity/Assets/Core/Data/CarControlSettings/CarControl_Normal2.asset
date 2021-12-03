@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48de848fd7f4100b43074e6fa7cf424, type: 3}
   m_Name: CarControl_Normal2
   m_EditorClassIdentifier: 
-  MaxTurnSpeed: 40
+  MaxTurnSpeed: 35
   MaxSpeed: 20
   MaxAccelerationBySpeed:
     serializedVersion: 2
@@ -76,7 +76,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.1
+      value: 0.2
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -108,22 +108,13 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.05247225
     - serializedVersion: 3
-      time: 0.82926184
-      value: 0.7915139
-      inSlope: -0.92181486
-      outSlope: -0.92181486
-      tangentMode: 1
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1.0009766
-      value: 0.39276275
-      inSlope: -2.086843
+      time: 1
+      value: 0.5
+      inSlope: -1.6647618
       outSlope: -2.585334
       tangentMode: 1
       weightedMode: 0
-      inWeight: 0.020129513
+      inWeight: 0.020234823
       outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2

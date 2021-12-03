@@ -115,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Camera: {fileID: 0}
   ZoomPercent: 0
-  MoveSpeed: 75
+  MoveSpeed: 100
   ScrollSpeed: 7.5
   MinimumPosition: {x: 0, y: 90, z: 0}
   MaximumPosition: {x: 500, y: 200, z: 500}

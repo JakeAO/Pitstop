@@ -6,6 +6,8 @@ namespace SadPumpkin.Game.Pitstop
 {
     public class RaceOverUI : MonoBehaviour
     {
+        public string MainMenuScene;
+        
         public GameObject WinnerObject;
         public GameObject LoserObject;
 
@@ -18,7 +20,7 @@ namespace SadPumpkin.Game.Pitstop
 
         public void OnContinueButtonPressed()
         {
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene(MainMenuScene);
         }
     }
 }

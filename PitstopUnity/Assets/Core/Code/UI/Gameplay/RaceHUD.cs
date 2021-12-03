@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using SadPumpkin.Game.Pitstop.Core.Code.Race;
@@ -54,6 +55,14 @@ namespace SadPumpkin.Game.Pitstop
         private void OnDisable()
         {
             FollowCarToggle.onValueChanged.RemoveListener(OnFollowToggled);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                FollowCarToggle.isOn = !FollowCarToggle.isOn;
+            }
         }
 
         private void OnFollowToggled(bool isOn)
