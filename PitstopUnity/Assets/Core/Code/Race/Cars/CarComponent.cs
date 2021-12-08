@@ -1,11 +1,13 @@
 using System;
-using SadPumpkin.Game.Pitstop.Core.Code.Race;
-using SadPumpkin.Game.Pitstop.Core.Code.RTS;
+using System.Collections.Generic;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Drivers;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Track;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race.Cars
 {
     public class CarComponent : MonoBehaviour
     {
@@ -14,11 +16,13 @@ namespace SadPumpkin.Game.Pitstop
             public enum Result
             {
                 // NOTE: Ordered so that higher numbers are MORE IMPORTANT visual indicators.
+                Self = -1,
                 Track = 0,
                 Goal = 1,
                 Car = 2,
                 Obstacle = 3,
-                Invalid = 4,
+                Pawn = 4,
+                Invalid = 5,
             }
 
             public Vector3 SamplePos;
@@ -36,10 +40,10 @@ namespace SadPumpkin.Game.Pitstop
         }
 
         private static int CAR_LAYER;
+        private static int PAWN_LAYER;
         private static int TRACK_LAYER;
         private static int OBSTACLE_LAYER;
         private static int GOAL_LAYER;
-        private static int GROUND_LAYER;
         
         public Renderer[] Meshes;
         public Renderer MinimapPip;
@@ -70,7 +74,7 @@ namespace SadPumpkin.Game.Pitstop
         [ReadOnly] public CarStatus CurrentStatus = CarStatus.Idle;
         [ReadOnly] public CarGoal CurrentGoal = CarGoal.Race;
 
-        [ReadOnly] public int Lap = -1;
+        [ReadOnly] public int Lap = 0;
         
         private Transform _transform;
 
@@ -82,24 +86,30 @@ namespace SadPumpkin.Game.Pitstop
         private int _lapsInRace;
 
         private VisionResult[,] _visionRange = new VisionResult[0, 0];
+        private List<(Vector3 goal, float distance, float angle)> _possibleGoalPoints = new List<(Vector3, float, float)>(5);
         private Vector3 _raceTargetPoint;
         private Vector3 _drivingTargetPoint;
+        private bool _seatedOnTrack;
 
         public Vector3 CarForward => _transform.forward;
         public Vector3 RaceForward => (_raceTargetPoint - _transform.position).normalized;
         public Vector3 DriveForward => (_drivingTargetPoint - _transform.position).normalized;
 
         private float _aiUpdateTimer = 0f;
-        
+
         private void Awake()
         {
             _transform = transform;
-            
+
             CAR_LAYER = LayerMask.NameToLayer("Car");
+            PAWN_LAYER = LayerMask.NameToLayer("Pawn");
             TRACK_LAYER = LayerMask.NameToLayer("Track");
             OBSTACLE_LAYER = LayerMask.NameToLayer("Obstacle");
             GOAL_LAYER = LayerMask.NameToLayer("InteractionPoint");
-            GROUND_LAYER = LayerMask.NameToLayer("Ground");
+
+            CurrentGoal = CarGoal.Race;
+            CurrentStatus = CarStatus.Idle;
+            Lap = 0;
         }
 
         public void Init(
@@ -122,6 +132,9 @@ namespace SadPumpkin.Game.Pitstop
             CurrentDriverStamina = _driverStatus.MaxStamina;
             CurrentCarBody = _carStatus.MaxBodyCondition;
             CurrentCarFuel = _carStatus.MaxFuel;
+
+            _raceTargetPoint = _transform.position + _transform.forward * 10f;
+            _drivingTargetPoint = _transform.position + _transform.forward * 2f;
         }
 
         public void UpdateCar(float timeStep, Vector3 raceForwardPoint)
@@ -140,15 +153,18 @@ namespace SadPumpkin.Game.Pitstop
                 _aiUpdateTimer -= timeStep;
                 if (_aiUpdateTimer <= 0f)
                 {
-                    UpdateVision();
-                    UpdateGoalPoint();
-
                     float driverStaminaRatio = CurrentDriverStamina / _driverStatus.MaxStamina;
                     float ticksUpdateMultiplier = _driverStatus.VisionModifierByStaminaRatio.Evaluate(driverStaminaRatio);
                     float ticksPerSec = _driverVision.VisionUpdatesPerSecond * ticksUpdateMultiplier;
-                    _aiUpdateTimer += 1f / ticksPerSec;
+                    float tickDelay = 1f / ticksPerSec;
+
+                    UpdateVision();
+
+                    _aiUpdateTimer += tickDelay;
                 }
             }
+            
+            UpdateGoalPoint(timeStep);
 
             // Update Movement
             UpdateSteering(timeStep);
@@ -180,7 +196,7 @@ namespace SadPumpkin.Game.Pitstop
 
             // Calculate the 'origin' point where the car currently exists
             (int x, int y) originIndex = (_visionRange.GetLength(0) / 2, 0);
-            Vector3 originPos = EyePoint.localPosition;
+            Vector3 originPos = EyePoint.localPosition + _driverVision.VisionOffset;
 
             // Calculate view direction for car
             Vector3 vectorToGoal = _drivingTargetPoint - carPosition;
@@ -217,7 +233,7 @@ namespace SadPumpkin.Game.Pitstop
                         VisionResult.Result resultType = VisionResult.Result.Invalid;
                         if (hit.collider == CarCollider)
                         {
-                            resultType = VisionResult.Result.Track;
+                            resultType = VisionResult.Result.Self;
                         }
                         else
                         {
@@ -238,8 +254,12 @@ namespace SadPumpkin.Game.Pitstop
                             {
                                 resultType = VisionResult.Result.Goal;
                             }
+                            else if (hitLayer == PAWN_LAYER)
+                            {
+                                resultType = VisionResult.Result.Pawn;
+                            }
                         }
-
+                        
                         _visionRange[x, y] = new VisionResult(samplePos, sampleRadius, resultType, hit);
                     }
                     else
@@ -269,15 +289,16 @@ namespace SadPumpkin.Game.Pitstop
             }
         }
 
-        private void UpdateGoalPoint()
+        private void UpdateGoalPoint(float timeStep)
         {
             bool GetPassableFromResult(VisionResult result)
             {
-                if (result.ResultType == VisionResult.Result.Track)
+                if (result.ResultType == VisionResult.Result.Track ||
+                    result.ResultType == VisionResult.Result.Self)
                     return true;
                 if (CurrentGoal == CarGoal.GoToPit &&
                     result.ResultType == VisionResult.Result.Goal &&
-                    Lap < _lapsInRace - 1)
+                    Lap < _lapsInRace)
                     return true;
                 return false;
             }
@@ -300,29 +321,57 @@ namespace SadPumpkin.Game.Pitstop
                 return length;
             }
 
-            _drivingTargetPoint = _transform.position + _transform.forward;
-
+            _seatedOnTrack = false;
+            _possibleGoalPoints.Clear();
             for (int x = 0; x < _visionRange.GetLength(0); x++)
             {
                 int maxPassable = MaxPassableFromColumn(_visionRange, x);
-                if (maxPassable > 0)
+                if (maxPassable > 0 &&
+                    _visionRange[x, maxPassable - 1].ResultType != VisionResult.Result.Self)
                 {
                     Vector3 drivingPoint = _visionRange[x, maxPassable - 1].SamplePos;
+                    drivingPoint = new Vector3(drivingPoint.x, _transform.position.y, drivingPoint.z);
 
-                    if (Vector3.Distance(_transform.position, _drivingTargetPoint) <
-                        Vector3.Distance(_transform.position, drivingPoint))
-                    {
-                        _drivingTargetPoint = new Vector3(drivingPoint.x, _transform.position.y, drivingPoint.z);
-                    }
+                    _possibleGoalPoints.Add((
+                        drivingPoint,
+                        Vector3.Distance(_transform.position, drivingPoint),
+                        Vector3.Angle(_transform.forward, drivingPoint - _transform.position)));
+
+                    _seatedOnTrack = true;
                 }
+            }
+            
+            // Sort (descending) all possible points based on their distance and turn angle
+            _possibleGoalPoints.Sort(SortPotentialGoalPoints);
+
+            // If we can't find a good direction, drive back towards the track
+            if (_possibleGoalPoints.Count == 0)
+            {
+                _drivingTargetPoint = _raceTargetPoint;
+            }
+            else
+            {
+                _drivingTargetPoint = Vector3.Lerp(_drivingTargetPoint, _possibleGoalPoints[0].goal, _driverVision.GoalRedirectStrength);
             }
 
             // If we're trying to get to the pit, target it
             if (CurrentGoal == CarGoal.GoToPit &&
-                Vector3.Distance(_transform.position, _pitLocation.transform.position) < 20f)
+                Vector3.Distance(_transform.position, _pitLocation.transform.position) < 10f)
             {
                 _drivingTargetPoint = _pitLocation.transform.position;
             }
+        }
+
+        private static int SortPotentialGoalPoints((Vector3 goal, float distance, float angle) x, (Vector3 goal, float distance, float angle) y)
+        {
+            const float DISTANCE_WEIGHT = 1f;
+            const float ANGLE_WEIGHT = 0.5f;
+
+            float xValue = x.distance * DISTANCE_WEIGHT - x.angle * ANGLE_WEIGHT;
+            float yValue = y.distance * DISTANCE_WEIGHT - y.angle * ANGLE_WEIGHT;
+
+            // Sort descending
+            return yValue.CompareTo(xValue);
         }
 
         private void UpdateSteering(float timeStep)
@@ -374,7 +423,12 @@ namespace SadPumpkin.Game.Pitstop
                 float speedRatioForTurnAngle = _carControl.TargetSpeedRatioByTurnRatio.Evaluate(percTurnAngle);
 
                 float speedRatioGoal = Mathf.Min(speedRatioForGoalDistance, speedRatioForTurnAngle);
-                speedGoal = speedRatioGoal * MaxSpeed;
+                if (!_seatedOnTrack)
+                {
+                    speedRatioGoal *= 0.5f;
+                }
+
+                speedGoal = speedRatioGoal * CurrentMaxSpeed;
             }
 
             // Accelerate/Decelerate towards goal
@@ -434,8 +488,6 @@ namespace SadPumpkin.Game.Pitstop
             if (collision.rigidbody != null &&
                 collision.rigidbody.GetComponent<CarComponent>() is { } cc)
             {
-                Debug.LogWarning($"Car \"{name}\" hit \"{cc.name}\" at a velocity of {collision.relativeVelocity.magnitude}!");
-
                 float collisionMagnitude = collision.relativeVelocity.magnitude;
                 float staminaLoss = _driverStatus.StaminaLossByHitVelocity.Evaluate(collisionMagnitude);
                 float bodyLoss = _carStatus.BodyDamageByHitVelocity.Evaluate(collisionMagnitude);
@@ -487,6 +539,7 @@ namespace SadPumpkin.Game.Pitstop
                             gizmoColor = Color.magenta;
                             break;
                         case VisionResult.Result.Car:
+                        case VisionResult.Result.Pawn:
                             gizmoColor = Color.red;
                             break;
                         case VisionResult.Result.Track:

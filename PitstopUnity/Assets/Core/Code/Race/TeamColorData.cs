@@ -1,3 +1,5 @@
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns;
 using UnityEngine;
 
 namespace SadPumpkin.Game.Pitstop.Core.Code.Race

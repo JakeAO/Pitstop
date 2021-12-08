@@ -1,7 +1,7 @@
 using Dreamteck.Splines;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race.Track
 {
     public class RacePathingComponent : MonoBehaviour
     {

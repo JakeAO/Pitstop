@@ -1,6 +1,4 @@
-using System;
-using SadPumpkin.Game.Pitstop.Core.Code;
-using SadPumpkin.Game.Pitstop.Core.Code.RTS;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit;
 using SadPumpkin.Game.Pitstop.Core.Code.RTS.Props;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
@@ -8,7 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns
 {
     [RequireComponent(typeof(NavMeshAgent))]
     public class PawnComponent : MonoBehaviour

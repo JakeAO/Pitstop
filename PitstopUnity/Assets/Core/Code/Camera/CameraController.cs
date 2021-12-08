@@ -2,7 +2,7 @@ using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Camera
 {
     public class CameraController : MonoBehaviour
     {

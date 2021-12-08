@@ -12,31 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1f8566370a4594ad58aa008b19ff9b, type: 3}
   m_Name: DriverVision_Default
   m_EditorClassIdentifier: 
-  VisionUpdatesPerSecond: 15
+  VisionOffset: {x: 0, y: 0, z: -1}
+  GoalRedirectStrength: 0.25
+  VisionUpdatesPerSecond: 30
   SampleStartRadiusMultipler: 2
   SampleLengthRadiusMultiplier: 4
-  TotalForwardSamples: 10
-  TotalPeripheralSamples: 3
+  TotalForwardSamples: 8
+  TotalPeripheralSamples: 1
   ForwardSampleRadiusByStep:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0.5
-      inSlope: 0
-      outSlope: 0.5378061
-      tangentMode: 1
+      inSlope: 1.5
+      outSlope: 1.5
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.123006836
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.75
-      inSlope: 0.5185978
-      outSlope: 0.5
-      tangentMode: 1
+      value: 2
+      inSlope: 1.5
+      outSlope: 1.5
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0.03189069
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -47,20 +49,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1.5
-      inSlope: 0.5
-      outSlope: 0.37521413
-      tangentMode: 1
+      inSlope: 1.5
+      outSlope: 1.5
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.123006836
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 3
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 1.5
+      outSlope: 1.5
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0.03189069
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -95,20 +97,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1.5
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 2
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      value: 3.5
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

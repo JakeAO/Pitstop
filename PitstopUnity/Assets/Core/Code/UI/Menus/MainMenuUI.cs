@@ -1,23 +1,28 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
-using SadPumpkin.Game.Pitstop.Core.Code;
 using SadPumpkin.Game.Pitstop.Core.Code.Race;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Drivers;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns;
+using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 using Random = System.Random;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.UI.Menus
 {
     public class MainMenuUI : MonoBehaviour
     {
         public string GameplayScene;
         
         public InterimDataHolder DataHolder;
+
+        public Toggle AudioToggle;
         
         public TMP_Text TitleLabel;
         public CanvasGroup MainPanelGroup;
@@ -45,6 +50,9 @@ namespace SadPumpkin.Game.Pitstop
 
         private void Start()
         {
+            AudioToggle.isOn = Mathf.Approximately(AppInit.BackgroundMusicSource.volume, 1f);
+            AudioToggle.onValueChanged.AddListener(OnAudioToggled);
+            
             TitleLabel.transform
                 .DORotate(Vector3.forward * 20f, 3f)
                 .ChangeStartValue(Vector3.back * 20f)
@@ -91,6 +99,11 @@ namespace SadPumpkin.Game.Pitstop
             UpdateWithCarSelection();
         }
 
+        private void OnDestroy()
+        {
+            AudioToggle.onValueChanged.RemoveListener(OnAudioToggled);
+        }
+
         private void UpdateWithTeamColor()
         {
             TeamColorData teamColorData = TeamColor[_currentTeamIndex];
@@ -109,6 +122,11 @@ namespace SadPumpkin.Game.Pitstop
         private void UpdateWithCarSelection()
         {
             CarPreviewRoot.DOLocalMoveX(-CarPreviewSpacing * _currentCarIndex, 0.5f);
+        }
+
+        private void OnAudioToggled(bool isOn)
+        {
+            AppInit.BackgroundMusicSource.volume = isOn ? 1f : 0f;
         }
 
         public void MainPanelPlayButtonPressed()

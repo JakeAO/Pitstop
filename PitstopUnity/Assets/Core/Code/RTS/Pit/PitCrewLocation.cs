@@ -1,13 +1,12 @@
-using SadPumpkin.Game.Pitstop.Core.Code.Util;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
+namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit
 {
     [RequireComponent(typeof(Collider))]
-    public class PitCrewLocation : MonoBehaviour, IPointerClickHandler
+    public class PitCrewLocation : MonoBehaviour
     {
-        public PitstopInteractionUI InteractionUI;
         public Transform FlagObject;
         public Renderer FlagRenderer;
         public Vector3 PitStopFlagTarget;
@@ -22,16 +21,6 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
             _teamController = teamController;
 
             _teamController.Team.TeamColor.ApplyToFlag(FlagRenderer);
-            
-            InteractionUI.Initialize(_teamController.Team);
-        }
-
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            if (_teamController.Player)
-            {
-                InteractionUI.UpdateActive(!InteractionUI.gameObject.activeSelf);
-            }
         }
 
         private void Update()

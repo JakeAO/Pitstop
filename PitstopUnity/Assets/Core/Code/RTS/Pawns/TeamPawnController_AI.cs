@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using SadPumpkin.Game.Pitstop.Core.Code;
-using SadPumpkin.Game.Pitstop.Core.Code.RTS;
+using SadPumpkin.Game.Pitstop.Core.Code.Race;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit;
 using SadPumpkin.Game.Pitstop.Core.Code.RTS.Props;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns
 {
     public class TeamPawnController_AI : TeamPawnController
     {

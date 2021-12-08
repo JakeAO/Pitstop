@@ -1,8 +1,9 @@
-using System;
 using System.Collections.Generic;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop.Core.Code.RTS
+namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit
 {
     [RequireComponent(typeof(Collider))]
     public class PitCarLocation : MonoBehaviour

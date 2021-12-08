@@ -1,14 +1,13 @@
-using System;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Camera
 {
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(UnityEngine.Camera))]
     public class GameplayCamera : MonoBehaviour
     {
-        [ReadOnly] public Camera Camera;
+        [ReadOnly] public UnityEngine.Camera Camera;
         [ReadOnly] public float ZoomPercent = 0f;
 
         public float MoveSpeed = 75f;
@@ -20,7 +19,7 @@ namespace SadPumpkin.Game.Pitstop
 
         private void Awake()
         {
-            Camera = GetComponent<Camera>();
+            Camera = GetComponent<UnityEngine.Camera>();
         }
 
         public void UpdateCamera(float timeStep)

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop.Core.Code.Race
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race.Drivers
 {
     [CreateAssetMenu]
     public class DriverStatusData : ScriptableObject

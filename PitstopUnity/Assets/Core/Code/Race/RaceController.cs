@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SadPumpkin.Game.Pitstop.Core.Code.Camera;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Track;
+using SadPumpkin.Game.Pitstop.Core.Code.UI.Gameplay;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using UnityEngine;
@@ -81,7 +85,7 @@ namespace SadPumpkin.Game.Pitstop.Core.Code.Race
             // Check for race results
             foreach (CarComponent carInstance in CarController.CarInstances)
             {
-                if (carInstance.Lap >= RaceLaps &&
+                if (carInstance.Lap > RaceLaps &&
                     carInstance.CurrentStatus == CarStatus.Race &&
                     !_raceResults.Contains(carInstance))
                 {

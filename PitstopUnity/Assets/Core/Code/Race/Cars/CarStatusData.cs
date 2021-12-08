@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race.Cars
 {
     [CreateAssetMenu]
     public class CarStatusData : ScriptableObject

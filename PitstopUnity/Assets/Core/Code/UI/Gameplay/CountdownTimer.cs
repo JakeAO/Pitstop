@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.UI.Gameplay
 {
     public class CountdownTimer : MonoBehaviour
     {

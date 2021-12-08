@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48de848fd7f4100b43074e6fa7cf424, type: 3}
   m_Name: CarControl_Sport1
   m_EditorClassIdentifier: 
-  MaxTurnSpeed: 35
+  MaxTurnSpeed: 36
   MaxSpeed: 22
   MaxAccelerationBySpeed:
     serializedVersion: 2

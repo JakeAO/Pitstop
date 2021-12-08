@@ -1,7 +1,7 @@
-using SadPumpkin.Game.Pitstop.Core.Code;
-using SadPumpkin.Game.Pitstop.Core.Code.RTS;
+using SadPumpkin.Game.Pitstop.Core.Code.Race;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns
 {
     public class TeamPawnController_Player : TeamPawnController
     {

@@ -1,6 +1,8 @@
-using SadPumpkin.Game.Pitstop.Core.Code.Race;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Drivers;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns;
 
-namespace SadPumpkin.Game.Pitstop.Core.Code
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race
 {
     public class TeamData
     {

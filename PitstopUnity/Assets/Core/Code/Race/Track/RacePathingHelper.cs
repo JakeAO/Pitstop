@@ -1,13 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dreamteck.Splines;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race.Track
 {
     public enum RacePathingType : int
     {
@@ -18,7 +18,42 @@ namespace SadPumpkin.Game.Pitstop
 
     public class RacePathingHelper
     {
+        private readonly struct PathPoint
+        {
+            public readonly float Distance;
+            public readonly float Percent;
+            public readonly SplineComputer Path;
+
+            public PathPoint(float distance, float percent, SplineComputer path)
+            {
+                Distance = distance;
+                Percent = percent;
+                Path = path;
+            }
+        }
+
         [ReadOnly] public IReadOnlyDictionary<RacePathingType, RacePathingComponent[]> PathingComponents;
+
+        private float _maxDistFromPath;
+        private readonly List<PathPoint> _allPathPointsCache = new List<PathPoint>(10);
+        
+        private static readonly IReadOnlyCollection<RacePathingType> _pitStopPriorityOrder = new[]
+        {
+            RacePathingType.Pit,
+            RacePathingType.MainTrack,
+            RacePathingType.AlternateTrack,
+        };
+
+        private static readonly IReadOnlyCollection<RacePathingType> _racePriorityOrder = new[]
+        {
+            RacePathingType.MainTrack,
+            RacePathingType.AlternateTrack,
+        };
+        
+        public RacePathingHelper(float maxDistanceFromValidPath = 10f)
+        {
+            _maxDistFromPath = maxDistanceFromValidPath;
+        }
 
         public void InitializeRacePaths()
         {
@@ -44,52 +79,52 @@ namespace SadPumpkin.Game.Pitstop
 
         public Vector3 GetCarForwardPoint(Vector3 carPosition, CarGoal carGoal, float forwardStepPercent = 0.025f)
         {
-            (float distance, float percent, SplineComputer path) GetPathData(
-                RacePathingComponent pathingComponent,
-                Vector3 position)
+            IReadOnlyCollection<RacePathingType> pathingTypeOrder = carGoal == CarGoal.GoToPit
+                ? _pitStopPriorityOrder
+                : _racePriorityOrder;
+
+            _allPathPointsCache.Clear();
+            foreach (RacePathingType racePathingType in pathingTypeOrder)
             {
-                if (Vector3.Distance(position, pathingComponent.transform.position) < pathingComponent.TestRange)
+                if (PathingComponents.TryGetValue(racePathingType, out var pathList))
                 {
-                    var splineSample = pathingComponent.Spline.Project(position);
+                    foreach (RacePathingComponent pathingComponent in pathList)
+                    {
+                        PathPoint pathPoint = GetPathData(pathingComponent, carPosition);
+                        if (pathPoint.Path != null)
+                        {
+                            if (pathPoint.Distance <= _maxDistFromPath)
+                            {
+                                return pathPoint.Path.EvaluatePosition((pathPoint.Percent + forwardStepPercent) % 1f);
+                            }
 
-                    return (Vector3.Distance(position, splineSample.position), (float)splineSample.percent, pathingComponent.Spline);
+                            _allPathPointsCache.Add(pathPoint);
+                        }
+                    }
                 }
-
-                return default;
             }
 
-            (float distance, float percent, SplineComputer path) pathPoint = default;
-
-            // If we're aiming for the pitstop, see if we're within range to start following that path
-            if (carGoal == CarGoal.GoToPit &&
-                PathingComponents.TryGetValue(RacePathingType.Pit, out var pathList))
+            if (_allPathPointsCache.Count > 0)
             {
-                pathPoint = pathList
-                    .Select(x => GetPathData(x, carPosition))
-                    .Where(x => x != default)
-                    .OrderBy(x => x.distance)
-                    .FirstOrDefault();
-            }
-
-            // If we're still racing then use whatever we can
-            if (pathPoint == default)
-            {
-                pathPoint = PathingComponents
-                    .SelectMany(x => x.Value)
-                    .Select(x => GetPathData(x, carPosition))
-                    .Where(x => x != default)
-                    .OrderBy(x => x.distance)
-                    .FirstOrDefault();
-            }
-
-            if (pathPoint != default)
-            {
-                return pathPoint.path.EvaluatePosition((pathPoint.percent + forwardStepPercent) % 1f);
+                PathPoint bestBadPoint = _allPathPointsCache.OrderBy(x => x.Distance).First();
+                return bestBadPoint.Path.EvaluatePosition((bestBadPoint.Percent + forwardStepPercent) % 1f);
             }
             else
             {
                 return Vector3.zero;
             }
+        }
+
+        private PathPoint GetPathData(RacePathingComponent pathingComponent, Vector3 position)
+        {
+            if (Vector3.Distance(position, pathingComponent.transform.position) < pathingComponent.TestRange)
+            {
+                var splineSample = pathingComponent.Spline.Project(position);
+
+                return new PathPoint(Vector3.Distance(position, splineSample.position), (float)splineSample.percent, pathingComponent.Spline);
+            }
+
+            return default;
         }
     }
 }

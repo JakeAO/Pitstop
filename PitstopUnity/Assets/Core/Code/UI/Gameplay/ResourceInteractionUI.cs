@@ -1,12 +1,14 @@
-using SadPumpkin.Game.Pitstop.Core.Code;
+using SadPumpkin.Game.Pitstop.Core.Code.Camera;
+using SadPumpkin.Game.Pitstop.Core.Code.Race;
 using SadPumpkin.Game.Pitstop.Core.Code.RTS;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns;
 using SadPumpkin.Game.Pitstop.Core.Code.RTS.Props;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.UI.Gameplay
 {
     public class ResourceInteractionUI : MonoBehaviour
     {

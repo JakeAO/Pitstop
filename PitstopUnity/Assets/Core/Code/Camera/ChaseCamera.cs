@@ -1,21 +1,23 @@
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Cars;
 using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Camera
 {
     public class ChaseCamera : MonoBehaviour
     {
         public float FollowDistance = 10f;
         public float FollowHeight = 5f;
         public float MovementSpeed = 20f;
-        public float MovementSmooth = 1f;
-        public float RotationSpeed = 30f;
+        public float MovementSmooth = 0.1f;
+        public float RotationSmooth = 0.1f;
 
         private Transform _transform;
         private CarComponent _targetCar;
 
         private Vector3 _currentVelocity;
-        
+        private Quaternion _currentAngularVelocity;
+
         public void Init(CarComponent targetCar)
         {
             _transform = transform;
@@ -28,18 +30,12 @@ namespace SadPumpkin.Game.Pitstop
         public void UpdateCamera(float timeStep)
         {
             Vector3 goalPos = _targetCar.transform.position + Vector3.up * FollowHeight + _targetCar.CarForward * -FollowDistance;
-            Quaternion carForwardRot = Quaternion.LookRotation(
-                _targetCar.DriveForward.IsApproximately(Vector3.zero)
-                    ? _targetCar.RaceForward.IsApproximately(Vector3.zero)
-                        ? _targetCar.CarForward
-                        : _targetCar.RaceForward
-                    : _targetCar.DriveForward,
-                Vector3.up);
-            Quaternion toCarRot = Quaternion.LookRotation(_targetCar.transform.position - _transform.position, Vector3.up);
-            Quaternion goalRot = Quaternion.Lerp(carForwardRot, toCarRot, 0.5f);
-
             _transform.position = Vector3.SmoothDamp(_transform.position, goalPos, ref _currentVelocity, MovementSmooth, MovementSpeed);
-            _transform.rotation = Quaternion.Slerp(_transform.rotation, goalRot, RotationSpeed * timeStep);
+
+            Quaternion cameraToCar = Quaternion.LookRotation(_targetCar.transform.position - _transform.position, Vector3.up);
+            Quaternion carDriveForward = Quaternion.LookRotation(_targetCar.DriveForward, Vector3.up);
+            Quaternion goalRot = Quaternion.Lerp(cameraToCar, carDriveForward, 0.5f);
+            _transform.rotation = QuaternionUtils.SmoothDamp(_transform.rotation, goalRot, ref _currentAngularVelocity, RotationSmooth);
         }
     }
 }

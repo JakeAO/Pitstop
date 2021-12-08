@@ -2,7 +2,7 @@ using SadPumpkin.Game.Pitstop.Core.Code.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.UI.Gameplay
 {
     public class RaceOverUI : MonoBehaviour
     {

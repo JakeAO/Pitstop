@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using SadPumpkin.Game.Pitstop.Core.Code;
-using SadPumpkin.Game.Pitstop.Core.Code.RTS;
+using SadPumpkin.Game.Pitstop.Core.Code.Race.Track;
+using SadPumpkin.Game.Pitstop.Core.Code.RTS.Pit;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.Race.Cars
 {
     public class CarController : MonoBehaviour
     {

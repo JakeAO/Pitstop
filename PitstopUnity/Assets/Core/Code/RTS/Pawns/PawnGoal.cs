@@ -1,4 +1,4 @@
-namespace SadPumpkin.Game.Pitstop
+namespace SadPumpkin.Game.Pitstop.Core.Code.RTS.Pawns
 {
     public enum PawnGoal
     {
